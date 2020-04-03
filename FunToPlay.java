@@ -3,10 +3,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class TICTACTOE {
-
-
-
-
     private static Integer[][] rows ={{0,0,0},{0,0,0},{0,0,0}};
     private static Integer[][] columns = new Integer[3][3];
     private static Integer[][] diagonals = new Integer[2][3];
