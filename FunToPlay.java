@@ -1,8 +1,14 @@
 import java.io.*;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-
+import java.security.*;
+import java.nio.charset.StandardCharsets;
 public class TICTACTOE {
+
+
+
+
     private static Integer[][] rows ={{0,0,0},{0,0,0},{0,0,0}};
     private static Integer[][] columns = new Integer[3][3];
     private static Integer[][] diagonals = new Integer[2][3];
@@ -32,7 +38,7 @@ public class TICTACTOE {
             put(Arrays.toString(new Integer[]{2,0}), new Integer[]{0,2});
         }
     };
-    public static void main(String[] args)  throws InterruptedException, IOException{
+    public static void main(String[] args)  throws InterruptedException, IOException,NoSuchAlgorithmException{
         startInput();
     }
     private static void MasterAlgorithm() throws InterruptedException, IOException{
@@ -287,7 +293,7 @@ public class TICTACTOE {
         printArr(rows);
         MasterAlgorithm();
     }
-    private static void startInput() throws InterruptedException,IOException{
+    private static void startInput() throws InterruptedException,IOException,NoSuchAlgorithmException{
         BufferedReader namesRead = new BufferedReader(new FileReader("names.txt"));
 
         String currName= String.valueOf(namesRead.readLine());
@@ -299,10 +305,12 @@ public class TICTACTOE {
         Scanner startIn = new Scanner(System.in);
         System.out.println("Hello! My Name is Theodore, the Tic-Tac-Toe Automaton!. Let's play a game. What's your name?");
         name = startIn.next();
-        if(nameSet.contains(name)){
+        if(nameSet.contains(getSHA(name))){
             System.out.println("Hello Again "+name+"!");
         }else{
-            namesWrite.println(name);
+            namesWrite.println(getSHA(name));
+            namesWrite.println(getSHA(name.toLowerCase()));
+            namesWrite.println(getSHA(name.toUpperCase()));
             namesWrite.close();
         }
         System.out.println("What Difficulty would you like to play at? (Easy/Medium/Hard/Impossible)");
@@ -489,5 +497,20 @@ public class TICTACTOE {
         }else{
             MasterAlgorithm();
         }
+    }
+    private static String getSHA(String input) throws NoSuchAlgorithmException {
+
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        return toHex(md.digest(input.getBytes(StandardCharsets.UTF_8)));
+    }
+    private static String toHex(byte[] hash) {
+
+        BigInteger number = new BigInteger(1, hash);
+        StringBuilder hexString = new StringBuilder(number.toString(16));
+        while (hexString.length() < 32)
+        {
+            hexString.insert(0, '0');
+        }
+        return hexString.toString();
     }
 }
