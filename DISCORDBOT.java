@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class DISCORDBOT {
     public static void main(String[] args) throws javax.security.auth.login.LoginException {
-        JDA jda = new JDABuilder("Njk4OTkzNTIyMTg3MTczOTIw.XpN6iA.CAMP2e9KHV1_f5IZoUEiOgaa9rU").build();
+        JDA jda = new JDABuilder("<Enter Your Discord OAUTH token here>").build();
         jda.addEventListener(new TICTACTOE());
     }
 }
