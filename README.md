@@ -4,4 +4,4 @@ This is a project that has terminated with a Discord Bot running on a gcloud ser
 
 JDA:https://github.com/DV8FromTheWorld/JDA
 
-Tutorial:https://www.youtube.com/watch?v=NxOxcgbikJo
+Tutorial I found from Kody Simpson:https://www.youtube.com/watch?v=NxOxcgbikJo
