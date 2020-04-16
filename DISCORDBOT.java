@@ -1,11 +1,12 @@
-import java.util.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-public class DISCORDBOT {
+
+import java.util.*;
+public class hi {
     public static void main(String[] args) throws javax.security.auth.login.LoginException {
-        JDA jda = new JDABuilder("<Enter Your Discord OAUTH token here>").build();
+        JDA jda = new JDABuilder("").build();
         jda.addEventListener(new TICTACTOE());
     }
 }
@@ -20,6 +21,12 @@ class TICTACTOE extends ListenerAdapter {
     public static Integer[] recent = new Integer[2];
     public static int randomChance =0;
     public static Random errorChance = new Random();
+    public static HashSet<String> trick = new HashSet<String>(){
+        {
+            add(Arrays.deepToString(new Integer[][]{{1,0,0},{0,-1,0},{0,0,1}}));
+            add(Arrays.deepToString(new Integer[][]{{0,0,1},{0,-1,0},{1,0,0}}));
+        }
+    };
     public static Map<String,Integer[]> twoFer = new HashMap<String,Integer[]>() {
         {
             put(Arrays.deepToString(new Integer[][]{{1,0,0},{0,-1,1},{0,0,-1}}),new Integer[] {2,1});
@@ -52,8 +59,8 @@ class TICTACTOE extends ListenerAdapter {
             event.getChannel().sendMessage("t!start starts the game").queue();
             event.getChannel().sendMessage("to select difficulty when prompted use t!easy, t!medium, t!hard, or t!impossible").queue();
             event.getChannel().sendMessage("to respond to yes/no write t!yes or t!no").queue();
-            event.getChannel().sendMessage("to say what column you want to play in, write t!playcolumn1, t!playcolumn2, or t!playcolumn3").queue();
-            event.getChannel().sendMessage("to say what row you want to play in, write t!playrow1, t!playrow2, or t!playrow3").queue();
+            event.getChannel().sendMessage("to say what column you want to play in, write t!col1, t!col2, or t!col3").queue();
+            event.getChannel().sendMessage("to say what row you want to play in, write t!row1, t!row2, or t!row3").queue();
             event.getChannel().sendMessage("please do not start a new game while someone is playing, and don't try to break the system, because it absolutely will. Thx fellow Exonians!").queue();
             return;
         }
@@ -92,22 +99,25 @@ class TICTACTOE extends ListenerAdapter {
                 MasterAlgorithm();
             return;
         }
-            if(messageSent.equalsIgnoreCase("t!playcolumn1")){
+            if(messageSent.equalsIgnoreCase("t!col1")){
                 inputC=1;
                 event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
                 return;
             }
-            if(messageSent.equalsIgnoreCase("t!playcolumn2")){
+            if(messageSent.equalsIgnoreCase("t!col2")){
                 inputC=2;
                 event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
                 return;
             }
-            if(messageSent.equalsIgnoreCase("t!playcolumn3")){
+            if(messageSent.equalsIgnoreCase("t!col3")){
                 inputC=3;
                 event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
                 return;
             }
-            if(messageSent.equalsIgnoreCase("t!playrow1")){
+            if(messageSent.equalsIgnoreCase("t!row1")){
+                if(inputC==0){
+                    return;
+                }
                 inputR=1;
                 if(rows[inputR-1][inputC-1]==0) {
                     generalInput();
@@ -116,7 +126,10 @@ class TICTACTOE extends ListenerAdapter {
                 }
                 return;
             }
-            if(messageSent.equalsIgnoreCase("t!playrow2")){
+            if(messageSent.equalsIgnoreCase("t!row2")){
+                if(inputC==0){
+                    return;
+                }
                 inputR=2;
                 if(rows[inputR-1][inputC-1]==0) {
                     generalInput();
@@ -125,7 +138,10 @@ class TICTACTOE extends ListenerAdapter {
                 }
                 return;
             }
-            if(messageSent.equalsIgnoreCase("t!playrow3")){
+            if(messageSent.equalsIgnoreCase("t!row3")){
+                if(inputC==0){
+                    return;
+                }
                 inputR=3;
                 if(rows[inputR-1][inputC-1]==0) {
                     generalInput();
@@ -306,6 +322,16 @@ class TICTACTOE extends ListenerAdapter {
             d.getChannel().sendMessage("Your turn. Enter the column that you want to play in.").queue();
             return;
 
+        }
+        if(trick.contains(Arrays.deepToString(rows))){
+            rows[1][2] =-1;
+            process();
+            if(evaluate()){
+                return;
+            }
+            printArr(rows);
+            d.getChannel().sendMessage("Your turn. Enter the column that you want to play in.").queue();
+            return;
         }
         if(rows[1][1] == 0){
             rows[1][1] = -1;
