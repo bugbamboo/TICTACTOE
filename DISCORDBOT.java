@@ -14,7 +14,9 @@ class TICTACTOE extends ListenerAdapter {
     static GuildMessageReceivedEvent d;
     static int inputC;
     static int inputR;
-
+    static int player =1;
+    static String challenger;
+    static String challenged;
     public static Integer[][] rows ={{0,0,0},{0,0,0},{0,0,0}};
     public static Integer[][] columns = new Integer[3][3];
     public static Integer[][] diagonals = new Integer[2][3];
@@ -51,6 +53,71 @@ class TICTACTOE extends ListenerAdapter {
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
         String messageSent = event.getMessage().getContentRaw();
         d=event;
+        if(!event.getMember().getUser().isBot()) {
+            if (messageSent.contains("t!challenge")) {
+                player =1;
+                StringTokenizer st = new StringTokenizer(messageSent);
+                st.nextToken();
+                challenger=event.getMember().getEffectiveName();
+                challenged = st.nextToken();
+                event.getChannel().sendMessage(challenger+" challenges " +challenged+" to a game of Tic Tac Toe!").queue();
+                rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
+                columns = new Integer[3][3];
+                diagonals = new Integer[2][3];
+                event.getChannel().sendMessage("Play a move @"+challenger+". Enter the column that you want to play in.").queue();
+            }
+        }
+        if(messageSent.equalsIgnoreCase("t!pcol1")){
+            inputC=1;
+            event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!pcol2")){
+            inputC=2;
+            event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!pcol3")){
+            inputC=3;
+            event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!prow1")){
+            if(inputC==0){
+                return;
+            }
+            inputR=1;
+            if(rows[inputR-1][inputC-1]==0) {
+                specialInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!prow2")){
+            if(inputC==0){
+                return;
+            }
+            inputR=2;
+            if(rows[inputR-1][inputC-1]==0) {
+                specialInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!prow3")){
+            if(inputC==0){
+                return;
+            }
+            inputR=3;
+            if(rows[inputR-1][inputC-1]==0) {
+                specialInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
         if(messageSent.equalsIgnoreCase("t!shutdown")){
             event.getChannel().sendMessage("Ok, bye!").queue();
             System.exit(0);
@@ -61,6 +128,7 @@ class TICTACTOE extends ListenerAdapter {
             event.getChannel().sendMessage("to respond to yes/no write t!yes or t!no").queue();
             event.getChannel().sendMessage("to say what column you want to play in, write t!col1, t!col2, or t!col3").queue();
             event.getChannel().sendMessage("to say what row you want to play in, write t!row1, t!row2, or t!row3").queue();
+            event.getChannel().sendMessage("To play against another person, use t!challenge <@person>. Then, during the game, both players use t!pcol1, t!pcol2, t!pcol3, and t!prow1, t!prow2, t!prow3 for playing against another human.").queue();
             event.getChannel().sendMessage("please do not start a new game while someone is playing, and don't try to break the system, because it absolutely will. Thx fellow Exonians!").queue();
             return;
         }
@@ -150,6 +218,7 @@ class TICTACTOE extends ListenerAdapter {
                 }
                 return;
             }
+
         }
 
 
@@ -447,7 +516,82 @@ class TICTACTOE extends ListenerAdapter {
         d.getChannel().sendMessage("Thinking...").queue();
         MasterAlgorithm();
     }
+    public static void specialInput(){
+        process();
+        int inputColumn;
+        inputColumn = inputC;
+        int inputRow;
+        inputRow = inputR;
+        recent=new Integer[]{inputRow,inputColumn};
+        rows[inputRow - 1][inputColumn - 1] = player;
+        if(player==1){
+            player=-1;
+        }
+        else if(player==-1){
+            player=1;
+        }
+        inputC=0;
+        inputR=0;
+        process();
+        printArr(rows);
+        if(Specialevaluate()){
+            return;
+        }
+        if(player==1) {
+            d.getChannel().sendMessage("@"+challenger+"'s Move. Enter the column that you want to play in.").queue();
+        }
+        if(player==-1) {
+            d.getChannel().sendMessage(challenged+"'s Move. Enter the column that you want to play in.").queue();
+        }
+    }
+    public static boolean Specialevaluate(){
+        process();
+        for(Integer[] row : rows){
+            if(sum(row) == -3){
+                d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+                return true;
 
+            }
+            if(sum(row) == 3){
+                d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                return true;
+            }
+        }
+        for(Integer[] column : columns){
+            if(sum(column) == -3){
+                d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+                return true;
+            }
+            if(sum(column) == 3){
+                d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                return true;
+            }
+        }
+        for(Integer[] diagonal : diagonals){
+            if(sum(diagonal) == -3){
+                d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+                return true;
+            }
+            if(sum(diagonal) == 3){
+                d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                return true;
+            }
+        }
+        int filled = 0;
+        for(Integer[] arr : rows){
+            for(int point : arr){
+                if(point != 0){
+                    filled++;
+                }
+
+            }
+        }
+        if(filled == 9){
+            d.getChannel().sendMessage("Draw! Good Game.").queue();
+            return true;
+        }
+        return false;
+    }
     public static void process(){
         columns = new Integer[][]{{rows[0][0], rows[1][0], rows[2][0]}, {rows[0][1], rows[1][1], rows[2][1]}, {rows[0][2], rows[1][2], rows[2][2]}};
         diagonals = new Integer[][] {{rows[0][0], rows[1][1], rows[2][2]},{rows[2][0],rows[1][1],rows[0][2]}};
@@ -460,7 +604,6 @@ class TICTACTOE extends ListenerAdapter {
     }
 
     public static boolean evaluate(){
-        Scanner evalIn = new Scanner(System.in);
         process();
         for(Integer[] row : rows){
             if(sum(row) == -3){
