@@ -1,9 +1,11 @@
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.*;
+
 public class hi {
     public static void main(String[] args) throws javax.security.auth.login.LoginException {
         JDA jda = new JDABuilder("").build();
@@ -17,6 +19,14 @@ class TICTACTOE extends ListenerAdapter {
     static int player =1;
     static String challenger;
     static String challenged;
+    static String name1;
+    static String name2;
+    public static Integer[][] exsdiag ={{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
+    public static Integer[][] exrow ={{1,1,1,1},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+    public static Integer[][] excol ={{1,0,0,0},{1,0,0,0},{1,0,0,0},{1,0,0,0}};
+    public static Integer[][] exsquare ={{1,1,0,0},{1,1,0,0},{0,0,0,0},{0,0,0,0}};
+    public static Integer[][] excross ={{1,0,1,0},{0,1,0,0},{1,0,1,0},{0,0,0,0}};
+    public static Integer[][] explus ={{0,1,0,0},{1,0,1,0},{0,1,0,0},{0,0,0,0}};
     public static Integer[][] rows ={{0,0,0},{0,0,0},{0,0,0}};
     public static Integer[][] columns = new Integer[3][3];
     public static Integer[][] diagonals = new Integer[2][3];
@@ -49,22 +59,170 @@ class TICTACTOE extends ListenerAdapter {
             put(Arrays.toString(new Integer[]{2,0}), new Integer[]{0,2});
         }
     };
-    static String input ="";
+
+    public static Integer[][] frows = new Integer[4][4];
+    public static Integer[][] fcolumns = new Integer[4][4];
+    public static Integer[][] fdiagonals = new Integer[2][4];
+    public static Integer[][] crosses = new Integer[4][5];
+    public static Integer[][] squares = new Integer[9][4];
+    public static Integer[][] plusses = new Integer[4][4];
+    static TreeMap<String, Double> sorted;
+    public static HashMap<String, Double> rank = new HashMap<String,Double>();
+    public static HashMap<String, Double> frank = new HashMap<String,Double>();
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
-        String messageSent = event.getMessage().getContentRaw();
+        Message m = event.getMessage();
+        String messageSent = m.getContentRaw();
         d=event;
+        if(messageSent.equalsIgnoreCase("t!rank")){
+            event.getChannel().sendMessage("Current top 5:").queue();
+            sorted = new TreeMap<String, Double>(new ValueComparator(rank));
+            sorted.putAll(rank);
+            Object[] arr = sorted.entrySet().toArray();
+            if(arr.length<5){
+                for(Object x:arr ){
+                    event.getChannel().sendMessage(x.toString()).queue();
+                }
+            }else{
+                for(int i=0; i<5; i++){
+                    event.getChannel().sendMessage(arr[i].toString()).queue();
+                }
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!frank")){
+            event.getChannel().sendMessage("Current top 5:").queue();
+            sorted = new TreeMap<String, Double>(new ValueComparator(frank));
+            sorted.putAll(frank);
+            Object[] arr = sorted.entrySet().toArray();
+            if(arr.length<5){
+                for(Object x:arr ){
+                    event.getChannel().sendMessage(x.toString()).queue();
+                }
+            }else{
+                for(int i=0; i<5; i++){
+                    event.getChannel().sendMessage(arr[i].toString()).queue();
+                }
+            }
+            return;
+        }
         if(!event.getMember().getUser().isBot()) {
             if (messageSent.contains("t!challenge")) {
                 player =1;
                 StringTokenizer st = new StringTokenizer(messageSent);
                 st.nextToken();
                 challenger=event.getMember().getEffectiveName();
-                challenged = st.nextToken();
+                name1=challenger;
+
+                try {
+                    challenged = st.nextToken();
+                    name2 = event.getMessage().getMentionedMembers().get(0).getEffectiveName();
+                }catch(Exception e){
+                }
+                if(!rank.containsKey(name1)){
+                    rank.put(name1,0.0);
+                }
+                if(!rank.containsKey(name2)){
+                    rank.put(name2,0.0);
+                }
                 event.getChannel().sendMessage(challenger+" challenges " +challenged+" to a game of Tic Tac Toe!").queue();
                 rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
                 columns = new Integer[3][3];
                 diagonals = new Integer[2][3];
                 event.getChannel().sendMessage("Play a move @"+challenger+". Enter the column that you want to play in.").queue();
+                return;
+            }
+        }
+        if(messageSent.equalsIgnoreCase("t!fcol1")){
+            inputC=1;
+            event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fcol2")){
+            inputC=2;
+            event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fcol3")){
+            inputC=3;
+            event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fcol4")){
+            inputC=4;
+            event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!frow1")){
+            if(inputC==0){
+                return;
+            }
+            inputR=1;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!frow2")){
+            if(inputC==0){
+                return;
+            }
+            inputR=2;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!frow3")){
+            if(inputC==0){
+                return;
+            }
+            inputR=3;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!frow4")){
+            if(inputC==0){
+                return;
+            }
+            inputR=4;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(!event.getMember().getUser().isBot()) {
+            if (messageSent.contains("t!fchallenge")) {
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
+                player =1;
+                StringTokenizer st = new StringTokenizer(messageSent);
+                st.nextToken();
+                challenger=event.getMember().getEffectiveName();
+                name1=challenger;
+                try {
+                    challenged = st.nextToken();
+                    name2 = event.getMessage().getMentionedMembers().get(0).getEffectiveName();
+                }catch(Exception e) {
+                }
+                if(!frank.containsKey(name1)){
+                    frank.put(name1,0.0);
+                }
+                if(!frank.containsKey(name2)){
+                    frank.put(name2,0.0);
+                }
+                event.getChannel().sendMessage(challenger+" challenges " +challenged+" to a game of Tic Tac Toe!").queue();
+                event.getChannel().sendMessage("Play a move @"+challenger+". Enter the column that you want to play in.").queue();
+                return;
             }
         }
         if(messageSent.equalsIgnoreCase("t!pcol1")){
@@ -118,20 +276,53 @@ class TICTACTOE extends ListenerAdapter {
             }
             return;
         }
-        if(messageSent.equalsIgnoreCase("t!shutdown")){
-            event.getChannel().sendMessage("Ok, bye!").queue();
-            System.exit(0);
-        }
         if(messageSent.equalsIgnoreCase("t!help")){
+            event.getChannel().sendMessage("This is page 1 of help").queue();
             event.getChannel().sendMessage("t!start starts the game").queue();
             event.getChannel().sendMessage("to select difficulty when prompted use t!easy, t!medium, t!hard, or t!impossible").queue();
             event.getChannel().sendMessage("to respond to yes/no write t!yes or t!no").queue();
-            event.getChannel().sendMessage("to say what column you want to play in, write t!col1, t!col2, or t!col3").queue();
-            event.getChannel().sendMessage("to say what row you want to play in, write t!row1, t!row2, or t!row3").queue();
-            event.getChannel().sendMessage("To play against another person, use t!challenge <@person>. Then, during the game, both players use t!pcol1, t!pcol2, t!pcol3, and t!prow1, t!prow2, t!prow3 for playing against another human.").queue();
-            event.getChannel().sendMessage("please do not start a new game while someone is playing, and don't try to break the system, because it absolutely will. Thx fellow Exonians!").queue();
+            event.getChannel().sendMessage("to say what column you want to play in, write t!rcol1, t!rcol2, or t!rcol3").queue();
+            event.getChannel().sendMessage("to say what row you want to play in, write t!rrow1, t!rrow2, or t!rrow3").queue();
+            event.getChannel().sendMessage("t!help2 will bring you to the second page of help documentation.").queue();
             return;
         }
+        if(messageSent.equalsIgnoreCase("t!help2")){
+            event.getChannel().sendMessage("This is page 2 of help").queue();
+            event.getChannel().sendMessage("To play against another person, use t!challenge <@person>.").queue();
+            event.getChannel().sendMessage("Then, during the game, both players use t!pcol1, t!pcol2, t!pcol3 for columns").queue();
+            event.getChannel().sendMessage(", and t!prow1, t!prow2, t!prow3 for the rows").queue();
+            event.getChannel().sendMessage("A win will be counted as 1 point, a loss as 0, and a draw as 0.5").queue();
+            event.getChannel().sendMessage("To see a sorted list of the top 5 users(and their scores), use t!rank").queue();
+            event.getChannel().sendMessage("t!help3 will bring you to the third page of help documentation").queue();
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!help3")){
+            event.getChannel().sendMessage("This is page 3 of help").queue();
+            event.getChannel().sendMessage("This page concerns the newest variant of Tic Tac Toe added to this server. 4x4 mode. ").queue();
+            event.getChannel().sendMessage("This mode is only available for playing against other humans.").queue();
+            event.getChannel().sendMessage("With 4x4 Tic Tac Toe, there are a few more win conditions than standard Tic Tac Toe to keep the game interesting.").queue();
+            event.getChannel().sendMessage("As usual, we have the diagonal:").queue();
+            fprint(exsdiag);
+            event.getChannel().sendMessage("The row:").queue();
+            fprint(exrow);
+            event.getChannel().sendMessage("And the column:").queue();
+            fprint(excol);
+            event.getChannel().sendMessage("But unlike regular Tic Tac Toe, we have 3 new win conditions.").queue();
+            event.getChannel().sendMessage("The Square:").queue();
+            fprint(exsquare);
+            event.getChannel().sendMessage("The Cross").queue();
+            fprint(excross);
+            event.getChannel().sendMessage("And the Rhombus:").queue();
+            fprint(explus);
+            event.getChannel().sendMessage("As with regular Tic Tac Toe, these patterns can occur anywhere on the board, and will result in a win on completion.").queue();
+            event.getChannel().sendMessage("To play against another person, use t!fchallenge <@person>.").queue();
+            event.getChannel().sendMessage("Then, during the game, both players use t!fcol1, t!fcol2, t!fcol3 for columns").queue();
+            event.getChannel().sendMessage(", and t!frow1, t!frow2, t!frow3 for the rows").queue();
+            event.getChannel().sendMessage("To check the top five players, use t!frank").queue();
+            event.getChannel().sendMessage("Enjoy!").queue();
+            return;
+        }
+
         if (messageSent.equalsIgnoreCase("t!start")){
             rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
             columns = new Integer[3][3];
@@ -167,22 +358,22 @@ class TICTACTOE extends ListenerAdapter {
                 MasterAlgorithm();
             return;
         }
-            if(messageSent.equalsIgnoreCase("t!col1")){
+            if(messageSent.equalsIgnoreCase("t!rcol1")){
                 inputC=1;
                 event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
                 return;
             }
-            if(messageSent.equalsIgnoreCase("t!col2")){
+            if(messageSent.equalsIgnoreCase("t!rcol2")){
                 inputC=2;
                 event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
                 return;
             }
-            if(messageSent.equalsIgnoreCase("t!col3")){
+            if(messageSent.equalsIgnoreCase("t!rcol3")){
                 inputC=3;
                 event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
                 return;
             }
-            if(messageSent.equalsIgnoreCase("t!row1")){
+            if(messageSent.equalsIgnoreCase("t!rrow1")){
                 if(inputC==0){
                     return;
                 }
@@ -194,7 +385,7 @@ class TICTACTOE extends ListenerAdapter {
                 }
                 return;
             }
-            if(messageSent.equalsIgnoreCase("t!row2")){
+            if(messageSent.equalsIgnoreCase("t!rrow2")){
                 if(inputC==0){
                     return;
                 }
@@ -206,7 +397,7 @@ class TICTACTOE extends ListenerAdapter {
                 }
                 return;
             }
-            if(messageSent.equalsIgnoreCase("t!row3")){
+            if(messageSent.equalsIgnoreCase("t!rrow3")){
                 if(inputC==0){
                     return;
                 }
@@ -220,10 +411,156 @@ class TICTACTOE extends ListenerAdapter {
             }
 
         }
+    public static void fprint(Integer[][] boardState){
+        for(Integer[] row : boardState){
+            d.getChannel().sendMessage(" "+ convert(row[0])+" |"+" "+ convert(row[1])+" |"+" "+ convert(row[2])+" |"+" "+ convert(row[3])).queue();
+        }
 
 
-    public static void main(String[] args){
     }
+    public static void fprocess(){
+        fcolumns= new Integer[][]{{frows[0][0], frows[1][0], frows[2][0],frows[3][0]}, {frows[0][1], frows[1][1], frows[2][1],frows[3][1]}, {frows[0][2], frows[1][2], frows[2][2],frows[3][2]}, {frows[0][3], frows[1][3], frows[2][3],frows[3][3]}};
+        fdiagonals = new Integer[][]{{frows[0][0], frows[1][1],frows[2][2],frows[3][3]},{frows[0][3],frows[1][2], frows[2][1], frows[3][0]}};
+        squares=new Integer[][]{{frows[0][0],frows[0][1],frows[1][0],frows[1][1]},{frows[0][1],frows[0][2],frows[1][1],frows[1][2]},{frows[0][2],frows[0][3],frows[1][2],frows[1][3]},{frows[1][0],frows[1][1],frows[2][0],frows[2][1]},{frows[1][1],frows[1][2],frows[2][1],frows[2][2]},{frows[1][2],frows[1][3],frows[2][2],frows[2][3]},{frows[2][0],frows[2][1],frows[3][0],frows[3][1]},{frows[2][1],frows[2][2],frows[3][1],frows[3][2]},{frows[2][2],frows[2][3],frows[3][2],frows[3][3]}};
+        plusses = new Integer[][]{{frows[0][1],frows[1][0],frows[2][1],frows[1][2]},{frows[0][2],frows[1][1],frows[2][2],frows[1][3]},{frows[1][1],frows[2][0],frows[3][1],frows[2][2]},{frows[1][2],frows[2][1],frows[3][2],frows[2][3]}};
+        crosses = new Integer[][]{{frows[0][0],frows[1][1],frows[2][2],frows[0][2],frows[2][0]},{frows[0][1],frows[1][2],frows[2][3],frows[0][3],frows[2][1]},{frows[1][0],frows[2][1],frows[3][2],frows[1][2],frows[3][0]},{frows[1][1],frows[2][2],frows[3][3],frows[1][3],frows[3][1]}};
+    }
+    public static void fInput(){
+        fprocess();
+        int inputColumn;
+        inputColumn = inputC;
+        int inputRow;
+        inputRow = inputR;
+        recent=new Integer[]{inputRow,inputColumn};
+        frows[inputRow - 1][inputColumn - 1] = player;
+        if(player==1){
+            player=-1;
+        }
+        else if(player==-1){
+            player=1;
+        }
+        inputC=0;
+        inputR=0;
+        fprocess();
+        fprint(frows);
+        if(fevaluate()){
+            return;
+        }
+        if(player==1) {
+            d.getChannel().sendMessage("@"+challenger+"'s Move. Enter the column that you want to play in.").queue();
+        }
+        if(player==-1) {
+            d.getChannel().sendMessage(challenged+"'s Move. Enter the column that you want to play in.").queue();
+        }
+    }
+    public static boolean fevaluate(){
+        fprocess();
+
+        for(Integer[] row : frows){
+            if(sum(row) == -4){
+                d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+                frank.put(name2,frank.get(name2)+1.0);
+                frank.put(name1,frank.get(name1)-1.0);
+                return true;
+
+            }
+            if(sum(row) == 4){
+                d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                frank.put(name2,frank.get(name2)-1.0);
+                frank.put(name1,frank.get(name1)+1.0);
+                return true;
+            }
+        }
+        for(Integer[] column : fcolumns){
+            if(sum(column) == -4){
+                d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+                frank.put(name2,frank.get(name2)+1.0);
+                frank.put(name1,frank.get(name1)-1.0);
+                return true;
+            }
+            if(sum(column) == 4){
+                d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                frank.put(name2,frank.get(name2)-1.0);
+                frank.put(name1,frank.get(name1)+1.0);
+                return true;
+            }
+        }
+        for(Integer[] diagonal : fdiagonals){
+            if(sum(diagonal) == -4){
+                d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+                frank.put(name2,frank.get(name2)+1.0);
+                frank.put(name1,frank.get(name1)-1.0);
+                return true;
+            }
+            if(sum(diagonal) == 4){
+                d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                frank.put(name2,frank.get(name2)-1.0);
+                frank.put(name1,frank.get(name1)+1.0);
+                return true;
+            }
+        }
+        for(Integer[] cross : crosses){
+            if(sum(cross) == -5){
+                d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+                frank.put(name2,frank.get(name2)+1.0);
+                frank.put(name1,frank.get(name1)-1.0);
+                return true;
+            }
+            if(sum(cross) == 5){
+                d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                frank.put(name2,frank.get(name2)-1.0);
+                frank.put(name1,frank.get(name1)+1.0);
+                return true;
+            }
+        }
+        for(Integer[] plus : plusses){
+            if(sum(plus) == -4){
+                d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+                frank.put(name2,frank.get(name2)+1.0);
+                frank.put(name1,frank.get(name1)-1.0);
+                return true;
+            }
+            if(sum(plus) == 4){
+                d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                frank.put(name2,frank.get(name2)-1.0);
+                frank.put(name1,frank.get(name1)+1.0);
+                return true;
+            }
+        }
+        for(Integer[] square : squares){
+            if(sum(square) == -4){
+                d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+                frank.put(name2,frank.get(name2)+1.0);
+                frank.put(name1,frank.get(name1)-1.0);
+                return true;
+            }
+            if(sum(square) == 4){
+                d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                frank.put(name2,frank.get(name2)-1.0);
+                frank.put(name1,frank.get(name1)+1.0);
+                return true;
+            }
+        }
+
+        int filled = 0;
+        for(Integer[] arr : frows){
+            for(int point : arr){
+                if(point != 0){
+                    filled++;
+                }
+
+            }
+        }
+        if(filled == 16){
+            d.getChannel().sendMessage("Draw! Good Game.").queue();
+            frank.put(name2,frank.get(name2)+0.0);
+            frank.put(name1,frank.get(name1)+0.0);
+            return true;
+        }
+        return false;
+    }
+
+
     public static void MasterAlgorithm(){
         process();
         if(evaluate()){
@@ -546,34 +883,48 @@ class TICTACTOE extends ListenerAdapter {
     }
     public static boolean Specialevaluate(){
         process();
+
         for(Integer[] row : rows){
             if(sum(row) == -3){
                 d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+
+                rank.put(name2,rank.get(name2)+1.0);
+                rank.put(name1,rank.get(name1)-1.0);
                 return true;
 
             }
             if(sum(row) == 3){
                 d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                rank.put(name2,rank.get(name2)-1.0);
+                rank.put(name1,rank.get(name1)+1.0);
                 return true;
             }
         }
         for(Integer[] column : columns){
             if(sum(column) == -3){
                 d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+                rank.put(name2,rank.get(name2)+1.0);
+                rank.put(name1,rank.get(name1)-1.0);
                 return true;
             }
             if(sum(column) == 3){
                 d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                rank.put(name2,rank.get(name2)-1.0);
+                rank.put(name1,rank.get(name1)+1.0);
                 return true;
             }
         }
         for(Integer[] diagonal : diagonals){
             if(sum(diagonal) == -3){
                 d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+                rank.put(name2,rank.get(name2)+1.0);
+                rank.put(name1,rank.get(name1)-1.0);
                 return true;
             }
             if(sum(diagonal) == 3){
                 d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                rank.put(name2,rank.get(name2)-1.0);
+                rank.put(name1,rank.get(name1)+1.0);
                 return true;
             }
         }
@@ -588,6 +939,8 @@ class TICTACTOE extends ListenerAdapter {
         }
         if(filled == 9){
             d.getChannel().sendMessage("Draw! Good Game.").queue();
+            rank.put(name2,rank.get(name2)+0.0);
+            rank.put(name1,rank.get(name1)+0.0);
             return true;
         }
         return false;
@@ -658,8 +1011,23 @@ class TICTACTOE extends ListenerAdapter {
         return false;
     }
     public static int sum(Integer[] line){
-        return line[0] + line[1] + line[2];
+        int g=0;
+        for(Integer i: line){
+            g+=i;
+        }
+        return g;
     }
     }
 
+class ValueComparator implements Comparator<String> {
 
+    private Map<String, Double> map;
+
+    public ValueComparator(Map<String, Double> map) {
+        this.map = map;
+    }
+
+    public int compare(String a, String b) {
+        return map.get(a).compareTo(map.get(b))*(0-1);
+    }
+}
