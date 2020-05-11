@@ -1028,6 +1028,9 @@ class ValueComparator implements Comparator<String> {
     }
 
     public int compare(String a, String b) {
+        if(map.get(a).compareTo(map.get(b))*(0-1)==0){
+            return 1;
+        }
         return map.get(a).compareTo(map.get(b))*(0-1);
     }
 }
