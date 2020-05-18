@@ -12,7 +12,7 @@ import java.util.*;
 
 public class hi {
     public static void main(String[] args) throws javax.security.auth.login.LoginException {
-        JDA jda = new JDABuilder("NzA3NjI5Mjk1MTUzMDUzNzY4.XrtVYA.JdeqAsXPIvEjDKrWmdyB3bDDeCs").build();
+        JDA jda = new JDABuilder("").build();
         jda.addEventListener(new TICTACTOE());
     }
 }
