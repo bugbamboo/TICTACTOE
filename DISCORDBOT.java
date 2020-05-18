@@ -1,18 +1,23 @@
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Emote;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import java.io.*;
 import java.util.*;
 
 public class hi {
     public static void main(String[] args) throws javax.security.auth.login.LoginException {
-        JDA jda = new JDABuilder("").build();
+        JDA jda = new JDABuilder("NzA3NjI5Mjk1MTUzMDUzNzY4.XrtVYA.JdeqAsXPIvEjDKrWmdyB3bDDeCs").build();
         jda.addEventListener(new TICTACTOE());
     }
 }
 class TICTACTOE extends ListenerAdapter {
+
     static GuildMessageReceivedEvent d;
     static int inputC;
     static int inputR;
@@ -73,6 +78,103 @@ class TICTACTOE extends ListenerAdapter {
         Message m = event.getMessage();
         String messageSent = m.getContentRaw();
         d=event;
+        if(messageSent.equalsIgnoreCase("t!claim")){
+            Role rone = event.getGuild().getRolesByName("one", true).get(0);
+            Role rtwo = event.getGuild().getRolesByName("two", true).get(0);
+            Role rthree = event.getGuild().getRolesByName("three", true).get(0);
+            Role rfour = event.getGuild().getRolesByName("four", true).get(0);
+            Role rfive = event.getGuild().getRolesByName("five", true).get(0);
+            HashSet<Role> two = new HashSet<Role>();
+            HashSet<Role> three = new HashSet<Role>();
+            HashSet<Role> four = new HashSet<Role>();
+            HashSet<Role> five = new HashSet<Role>();
+            two.add(rtwo);
+            two.add(rthree);
+            two.add(rfour);
+            two.add(rfive);
+            three.add(rthree);
+            three.add(rfour);
+            three.add(rfive);
+            four.add(rfour);
+            four.add(rfive);
+            five.add(rfive);
+            List<Emote> x = event.getGuild().getEmotes();
+            for (Emote n :x){
+
+                if(n.getName().equalsIgnoreCase("theodore_farmer") || n.getName().equalsIgnoreCase("theodore_blacksmith")){
+                    n.getManager().setName(n.getName()).setRoles(two).queue();
+                    continue;
+                }if(n.getName().equalsIgnoreCase("theodore_knight")||n.getName().equalsIgnoreCase("theodore_archer")||n.getName().equalsIgnoreCase("theodore_viking")){
+                    n.getManager().setName(n.getName()).setRoles(three).queue();
+                    continue;
+                }if(n.getName().equalsIgnoreCase("theodore_noble")||n.getName().equalsIgnoreCase("theodore_artist")||n.getName().equalsIgnoreCase("theodore_rich")||n.getName().equalsIgnoreCase("theodore_musician")){
+                    n.getManager().setName(n.getName()).setRoles(four).queue();
+                    continue;
+                }if(n.getName().equalsIgnoreCase("theodore_king")||n.getName().equalsIgnoreCase("theodore_princess")||n.getName().equalsIgnoreCase("theodore_jester")||n.getName().equalsIgnoreCase("theodore_queen")||n.getName().equalsIgnoreCase("theodore_prince")){
+                    n.getManager().setName(n.getName()).setRoles(five).queue();
+                }
+
+            }
+
+            for(Member member: event.getGuild().getMembers()){
+                double count = 0.0;
+                if(rank.containsKey(member.getEffectiveName())){
+                    count += rank.get(member.getEffectiveName());
+                }
+                if(frank.containsKey(member.getEffectiveName())){
+                    count += frank.get(member.getEffectiveName());
+                }
+
+                if(count>=15.0||member.getEffectiveName().equalsIgnoreCase("Achyuta")) {
+                    event.getGuild().addRoleToMember(member,rfive).queue();
+                }else if(count>=10.0){
+                    event.getGuild().removeRoleFromMember(member,rfive).queue();
+                    event.getGuild().addRoleToMember(member,rfour).queue();
+                }else if(count>=6.0){
+                    event.getGuild().removeRoleFromMember(member,rfive).queue();
+                    event.getGuild().removeRoleFromMember(member, rfour).queue();
+                    event.getGuild().addRoleToMember(member, rthree).queue();
+                }else if(count >= 3.0){
+                    event.getGuild().removeRoleFromMember(member,rfive).queue();
+                    event.getGuild().removeRoleFromMember(member, rfour).queue();
+                    event.getGuild().removeRoleFromMember(member,rthree).queue();
+                    event.getGuild().addRoleToMember(member,rtwo).queue();
+                }else{
+                    event.getGuild().removeRoleFromMember(member,rfive).queue();
+                    event.getGuild().removeRoleFromMember(member,rfour).queue();
+                    event.getGuild().removeRoleFromMember(member,rthree).queue();
+                    event.getGuild().removeRoleFromMember(member,rtwo).queue();
+                    event.getGuild().addRoleToMember(member,rone).queue();
+                }
+            }
+            event.getChannel().sendMessage("Rewards Claimed!").queue();
+            return;
+
+        }
+        if(messageSent.equalsIgnoreCase("t!safe_shutdown")) {
+            if (event.getMember().getEffectiveName().equalsIgnoreCase("Achyuta")) {
+            try {
+                PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("rank.txt")));
+                PrintWriter out2 = new PrintWriter(new BufferedWriter(new FileWriter("frank.txt")));
+                out.println(rank.size());
+                out2.println(frank.size());
+
+                for (Member h : event.getGuild().getMembers()) {
+                    if (rank.containsKey(h.getEffectiveName())) {
+                        out.println(h.getEffectiveName() + " " + rank.get(h.getEffectiveName()));
+                    }
+                    if (frank.containsKey(h.getEffectiveName())) {
+                        out2.println(h.getEffectiveName() + " " + frank.get(h.getEffectiveName()));
+                    }
+                }
+
+                out.close();
+                out2.close();
+            } catch (Exception e) {
+            }
+            System.exit(0);
+        }
+        }
         if(messageSent.equalsIgnoreCase("t!rank")){
             event.getChannel().sendMessage("Current top 5:").queue();
             sorted = new TreeMap<String, Double>(new ValueComparator(rank));
@@ -107,6 +209,28 @@ class TICTACTOE extends ListenerAdapter {
         }
         if(!event.getMember().getUser().isBot()) {
             if (messageSent.contains("t!challenge")) {
+                if(frank.isEmpty()){
+
+                    try{
+                        BufferedReader f = new BufferedReader(new FileReader("frank.txt"));
+                        int i =Integer.parseInt(f.readLine());
+                        for(int d=0; d<i; d++){
+                            StringTokenizer st = new StringTokenizer(f.readLine());
+                            frank.put(st.nextToken(), Double.parseDouble(st.nextToken()));
+                        }
+                    }catch(Exception e){ }}
+                if(rank.isEmpty()){
+                    BufferedReader f;
+                    try{
+                        f = new BufferedReader(new FileReader("rank.txt"));
+                        int i =Integer.parseInt(f.readLine());
+                        for(int d=0; d<i; d++){
+                            StringTokenizer st = new StringTokenizer(f.readLine());
+                            rank.put(st.nextToken(), Double.parseDouble(st.nextToken()));
+                        }
+                    }catch(Exception e){ }}
+
+
                 player =1;
                 StringTokenizer st = new StringTokenizer(messageSent);
                 st.nextToken();
@@ -132,27 +256,187 @@ class TICTACTOE extends ListenerAdapter {
                 return;
             }
         }
-        if(messageSent.equalsIgnoreCase("t!fcol1")){
+        if(messageSent.equalsIgnoreCase("t!fa1")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=1;
+            inputR=4;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fb1")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=2;
+            inputR=4;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fc1")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=3;
+            inputR=4;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fd1")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=4;
+            inputR=4;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fa2")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=1;
+            inputR=3;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fb2")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=2;
+            inputR=3;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fc2")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=3;
+            inputR=3;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fd2")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=4;
+            inputR=3;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fa3")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=1;
+            inputR=2;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fb3")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=2;
+            inputR=2;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fc3")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=3;
+            inputR=2;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fd3")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=4;
+            inputR=2;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fa4")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=1;
+            inputR=1;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fb4")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=2;
+            inputR=1;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fc4")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=3;
+            inputR=1;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fd4")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=4;
+            inputR=1;
+            if(frows[inputR-1][inputC-1]==0) {
+                fInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!fcol1")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
             inputC=1;
             event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
             return;
         }
-        if(messageSent.equalsIgnoreCase("t!fcol2")){
+        if(messageSent.equalsIgnoreCase("t!fcol2")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
             inputC=2;
             event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
             return;
         }
-        if(messageSent.equalsIgnoreCase("t!fcol3")){
+        if(messageSent.equalsIgnoreCase("t!fcol3")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
             inputC=3;
             event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
             return;
         }
-        if(messageSent.equalsIgnoreCase("t!fcol4")){
+        if(messageSent.equalsIgnoreCase("t!fcol4")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
             inputC=4;
             event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
             return;
         }
-        if(messageSent.equalsIgnoreCase("t!frow1")){
+        if(messageSent.equalsIgnoreCase("t!frow1")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
             if(inputC==0){
                 return;
             }
@@ -164,7 +448,7 @@ class TICTACTOE extends ListenerAdapter {
             }
             return;
         }
-        if(messageSent.equalsIgnoreCase("t!frow2")){
+        if(messageSent.equalsIgnoreCase("t!frow2")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
             if(inputC==0){
                 return;
             }
@@ -176,7 +460,7 @@ class TICTACTOE extends ListenerAdapter {
             }
             return;
         }
-        if(messageSent.equalsIgnoreCase("t!frow3")){
+        if(messageSent.equalsIgnoreCase("t!frow3")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
             if(inputC==0){
                 return;
             }
@@ -188,7 +472,7 @@ class TICTACTOE extends ListenerAdapter {
             }
             return;
         }
-        if(messageSent.equalsIgnoreCase("t!frow4")){
+        if(messageSent.equalsIgnoreCase("t!frow4")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
             if(inputC==0){
                 return;
             }
@@ -202,6 +486,26 @@ class TICTACTOE extends ListenerAdapter {
         }
         if(!event.getMember().getUser().isBot()) {
             if (messageSent.contains("t!fchallenge")) {
+                if(frank.isEmpty()){
+
+                    try{
+                        BufferedReader f = new BufferedReader(new FileReader("frank.txt"));
+                        int i =Integer.parseInt(f.readLine());
+                        for(int d=0; d<i; d++){
+                            StringTokenizer st = new StringTokenizer(f.readLine());
+                            frank.put(st.nextToken(), Double.parseDouble(st.nextToken()));
+                        }
+                    }catch(Exception e){ }}
+                if(rank.isEmpty()){
+                    BufferedReader f;
+                    try{
+                        f = new BufferedReader(new FileReader("rank.txt"));
+                        int i =Integer.parseInt(f.readLine());
+                        for(int d=0; d<i; d++){
+                            StringTokenizer st = new StringTokenizer(f.readLine());
+                            rank.put(st.nextToken(), Double.parseDouble(st.nextToken()));
+                        }
+                    }catch(Exception e){ }}
                 frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
                 fprocess();
                 player =1;
@@ -225,22 +529,112 @@ class TICTACTOE extends ListenerAdapter {
                 return;
             }
         }
-        if(messageSent.equalsIgnoreCase("t!pcol1")){
+        if(messageSent.equalsIgnoreCase("t!pa3")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=1;
+            inputR=1;
+            if(rows[inputR-1][inputC-1]==0) {
+                specialInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!pb3")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=2;
+            inputR=1;
+            if(rows[inputR-1][inputC-1]==0) {
+                specialInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!pc3")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=3;
+            inputR=1;
+            if(rows[inputR-1][inputC-1]==0) {
+                specialInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!pa2")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=1;
+            inputR=2;
+            if(rows[inputR-1][inputC-1]==0) {
+                specialInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!pb2")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=2;
+            inputR=2;
+            if(rows[inputR-1][inputC-1]==0) {
+                specialInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!pc2")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=3;
+            inputR=2;
+            if(rows[inputR-1][inputC-1]==0) {
+                specialInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!pa1")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=1;
+            inputR=3;
+            if(rows[inputR-1][inputC-1]==0) {
+                specialInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!pb1")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=2;
+            inputR=3;
+            if(rows[inputR-1][inputC-1]==0) {
+                specialInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!pc1")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=3;
+            inputR=3;
+            if(rows[inputR-1][inputC-1]==0) {
+                specialInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!pcol1")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
             inputC=1;
             event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
             return;
         }
-        if(messageSent.equalsIgnoreCase("t!pcol2")){
+        if(messageSent.equalsIgnoreCase("t!pcol2")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
             inputC=2;
             event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
             return;
         }
-        if(messageSent.equalsIgnoreCase("t!pcol3")){
+        if(messageSent.equalsIgnoreCase("t!pcol3")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
             inputC=3;
             event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
             return;
         }
-        if(messageSent.equalsIgnoreCase("t!prow1")){
+        if(messageSent.equalsIgnoreCase("t!prow1")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
             if(inputC==0){
                 return;
             }
@@ -252,7 +646,7 @@ class TICTACTOE extends ListenerAdapter {
             }
             return;
         }
-        if(messageSent.equalsIgnoreCase("t!prow2")){
+        if(messageSent.equalsIgnoreCase("t!prow2")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
             if(inputC==0){
                 return;
             }
@@ -264,7 +658,7 @@ class TICTACTOE extends ListenerAdapter {
             }
             return;
         }
-        if(messageSent.equalsIgnoreCase("t!prow3")){
+        if(messageSent.equalsIgnoreCase("t!prow3")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
             if(inputC==0){
                 return;
             }
@@ -283,6 +677,7 @@ class TICTACTOE extends ListenerAdapter {
             event.getChannel().sendMessage("to respond to yes/no write t!yes or t!no").queue();
             event.getChannel().sendMessage("to say what column you want to play in, write t!rcol1, t!rcol2, or t!rcol3").queue();
             event.getChannel().sendMessage("to say what row you want to play in, write t!rrow1, t!rrow2, or t!rrow3").queue();
+            event.getChannel().sendMessage("Chess notation is also available. For example to play in the bottom-left corner, use t!ra1.").queue();
             event.getChannel().sendMessage("t!help2 will bring you to the second page of help documentation.").queue();
             return;
         }
@@ -291,8 +686,17 @@ class TICTACTOE extends ListenerAdapter {
             event.getChannel().sendMessage("To play against another person, use t!challenge <@person>.").queue();
             event.getChannel().sendMessage("Then, during the game, both players use t!pcol1, t!pcol2, t!pcol3 for columns").queue();
             event.getChannel().sendMessage(", and t!prow1, t!prow2, t!prow3 for the rows").queue();
-            event.getChannel().sendMessage("A win will be counted as 1 point, a loss as 0, and a draw as 0.5").queue();
+            event.getChannel().sendMessage("Chess notation is also available. For example to play in the bottom-left corner, use t!pa1.").queue();
+            event.getChannel().sendMessage("A win will be counted as 1 point, a loss as -1, and a draw as 0").queue();
             event.getChannel().sendMessage("To see a sorted list of the top 5 users(and their scores), use t!rank").queue();
+            event.getChannel().sendMessage("There is also a progression system with 5 levels. Everyone starts at level 1. For each level, you will gain access to more and better emotes, for a maximum of 15 emojis at level 5.").queue();
+            event.getChannel().sendMessage("To level up, increase the sum of your leaderboard scores for pvp standard and 4x4 tic tac toe.").queue();
+            event.getChannel().sendMessage("If you score-sum reaches 3, you reach Level 2.").queue();
+            event.getChannel().sendMessage("Level 3 is at 6.").queue();
+            event.getChannel().sendMessage("Level 4 is at 10.").queue();
+            event.getChannel().sendMessage("Level 5 is at 15 and higher.").queue();
+            event.getChannel().sendMessage("You are heavily encouraged to value the character of others based off of their level.").queue();
+            event.getChannel().sendMessage("Try to reach the top!").queue();
             event.getChannel().sendMessage("t!help3 will bring you to the third page of help documentation").queue();
             return;
         }
@@ -316,10 +720,11 @@ class TICTACTOE extends ListenerAdapter {
             fprint(explus);
             event.getChannel().sendMessage("As with regular Tic Tac Toe, these patterns can occur anywhere on the board, and will result in a win on completion.").queue();
             event.getChannel().sendMessage("To play against another person, use t!fchallenge <@person>.").queue();
-            event.getChannel().sendMessage("Then, during the game, both players use t!fcol1, t!fcol2, t!fcol3 for columns").queue();
-            event.getChannel().sendMessage(", and t!frow1, t!frow2, t!frow3 for the rows").queue();
+            event.getChannel().sendMessage("Then, during the game, both players use t!fcol1, t!fcol2, t!fcol3, t!fcol4 for columns").queue();
+            event.getChannel().sendMessage(", and t!frow1, t!frow2, t!frow3, t!frow4 for the rows").queue();
+            event.getChannel().sendMessage("Chess notation is also available. For example to play in the bottom-left corner, use t!fa1.").queue();
             event.getChannel().sendMessage("To check the top five players, use t!frank").queue();
-            event.getChannel().sendMessage("Enjoy!").queue();
+            event.getChannel().sendMessage("Enjoy fellow Exonians!").queue();
             return;
         }
 
@@ -356,6 +761,96 @@ class TICTACTOE extends ListenerAdapter {
         }
         if(messageSent.equalsIgnoreCase("t!no")){
                 MasterAlgorithm();
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!ra3")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=1;
+            inputR=1;
+            if(rows[inputR-1][inputC-1]==0) {
+                generalInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!rb3")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=2;
+            inputR=1;
+            if(rows[inputR-1][inputC-1]==0) {
+                generalInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!rc3")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=3;
+            inputR=1;
+            if(rows[inputR-1][inputC-1]==0) {
+                generalInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!ra2")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=1;
+            inputR=2;
+            if(rows[inputR-1][inputC-1]==0) {
+                generalInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!rb2")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=2;
+            inputR=2;
+            if(rows[inputR-1][inputC-1]==0) {
+                generalInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!rc2")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=3;
+            inputR=2;
+            if(rows[inputR-1][inputC-1]==0) {
+                generalInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!ra1")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=1;
+            inputR=3;
+            if(rows[inputR-1][inputC-1]==0) {
+                generalInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!rb1")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=2;
+            inputR=3;
+            if(rows[inputR-1][inputC-1]==0) {
+                generalInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!rc1")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
+            inputC=3;
+            inputR=3;
+            if(rows[inputR-1][inputC-1]==0) {
+                generalInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
             return;
         }
             if(messageSent.equalsIgnoreCase("t!rcol1")){
@@ -461,6 +956,8 @@ class TICTACTOE extends ListenerAdapter {
                 d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
                 frank.put(name2,frank.get(name2)+1.0);
                 frank.put(name1,frank.get(name1)-1.0);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
                 return true;
 
             }
@@ -468,6 +965,8 @@ class TICTACTOE extends ListenerAdapter {
                 d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
                 frank.put(name2,frank.get(name2)-1.0);
                 frank.put(name1,frank.get(name1)+1.0);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
                 return true;
             }
         }
@@ -476,12 +975,16 @@ class TICTACTOE extends ListenerAdapter {
                 d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
                 frank.put(name2,frank.get(name2)+1.0);
                 frank.put(name1,frank.get(name1)-1.0);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
                 return true;
             }
             if(sum(column) == 4){
                 d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
                 frank.put(name2,frank.get(name2)-1.0);
                 frank.put(name1,frank.get(name1)+1.0);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
                 return true;
             }
         }
@@ -490,12 +993,16 @@ class TICTACTOE extends ListenerAdapter {
                 d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
                 frank.put(name2,frank.get(name2)+1.0);
                 frank.put(name1,frank.get(name1)-1.0);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
                 return true;
             }
             if(sum(diagonal) == 4){
                 d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
                 frank.put(name2,frank.get(name2)-1.0);
                 frank.put(name1,frank.get(name1)+1.0);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
                 return true;
             }
         }
@@ -504,12 +1011,16 @@ class TICTACTOE extends ListenerAdapter {
                 d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
                 frank.put(name2,frank.get(name2)+1.0);
                 frank.put(name1,frank.get(name1)-1.0);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
                 return true;
             }
             if(sum(cross) == 5){
                 d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
                 frank.put(name2,frank.get(name2)-1.0);
                 frank.put(name1,frank.get(name1)+1.0);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
                 return true;
             }
         }
@@ -518,12 +1029,16 @@ class TICTACTOE extends ListenerAdapter {
                 d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
                 frank.put(name2,frank.get(name2)+1.0);
                 frank.put(name1,frank.get(name1)-1.0);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
                 return true;
             }
             if(sum(plus) == 4){
                 d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
                 frank.put(name2,frank.get(name2)-1.0);
                 frank.put(name1,frank.get(name1)+1.0);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
                 return true;
             }
         }
@@ -532,12 +1047,16 @@ class TICTACTOE extends ListenerAdapter {
                 d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
                 frank.put(name2,frank.get(name2)+1.0);
                 frank.put(name1,frank.get(name1)-1.0);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
                 return true;
             }
             if(sum(square) == 4){
                 d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
                 frank.put(name2,frank.get(name2)-1.0);
                 frank.put(name1,frank.get(name1)+1.0);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
                 return true;
             }
         }
@@ -555,6 +1074,8 @@ class TICTACTOE extends ListenerAdapter {
             d.getChannel().sendMessage("Draw! Good Game.").queue();
             frank.put(name2,frank.get(name2)+0.0);
             frank.put(name1,frank.get(name1)+0.0);
+            frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+            fprocess();
             return true;
         }
         return false;
@@ -890,6 +1411,9 @@ class TICTACTOE extends ListenerAdapter {
 
                 rank.put(name2,rank.get(name2)+1.0);
                 rank.put(name1,rank.get(name1)-1.0);
+                rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
+                columns = new Integer[3][3];
+                diagonals = new Integer[2][3];
                 return true;
 
             }
@@ -897,6 +1421,9 @@ class TICTACTOE extends ListenerAdapter {
                 d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
                 rank.put(name2,rank.get(name2)-1.0);
                 rank.put(name1,rank.get(name1)+1.0);
+                rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
+                columns = new Integer[3][3];
+                diagonals = new Integer[2][3];
                 return true;
             }
         }
@@ -905,12 +1432,18 @@ class TICTACTOE extends ListenerAdapter {
                 d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
                 rank.put(name2,rank.get(name2)+1.0);
                 rank.put(name1,rank.get(name1)-1.0);
+                rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
+                columns = new Integer[3][3];
+                diagonals = new Integer[2][3];
                 return true;
             }
             if(sum(column) == 3){
                 d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
                 rank.put(name2,rank.get(name2)-1.0);
                 rank.put(name1,rank.get(name1)+1.0);
+                rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
+                columns = new Integer[3][3];
+                diagonals = new Integer[2][3];
                 return true;
             }
         }
@@ -919,12 +1452,18 @@ class TICTACTOE extends ListenerAdapter {
                 d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
                 rank.put(name2,rank.get(name2)+1.0);
                 rank.put(name1,rank.get(name1)-1.0);
+                rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
+                columns = new Integer[3][3];
+                diagonals = new Integer[2][3];
                 return true;
             }
             if(sum(diagonal) == 3){
                 d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
                 rank.put(name2,rank.get(name2)-1.0);
                 rank.put(name1,rank.get(name1)+1.0);
+                rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
+                columns = new Integer[3][3];
+                diagonals = new Integer[2][3];
                 return true;
             }
         }
@@ -941,6 +1480,9 @@ class TICTACTOE extends ListenerAdapter {
             d.getChannel().sendMessage("Draw! Good Game.").queue();
             rank.put(name2,rank.get(name2)+0.0);
             rank.put(name1,rank.get(name1)+0.0);
+            rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
+            columns = new Integer[3][3];
+            diagonals = new Integer[2][3];
             return true;
         }
         return false;
@@ -962,12 +1504,18 @@ class TICTACTOE extends ListenerAdapter {
             if(sum(row) == -3){
                 printArr(rows);
                 d.getChannel().sendMessage("I Win! Good Game.").queue();
+                rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
+                columns = new Integer[3][3];
+                diagonals = new Integer[2][3];
                 return true;
 
             }
             if(sum(row) == 3){
                 printArr(rows);
                 d.getChannel().sendMessage("You Win :( Good Game.").queue();
+                rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
+                columns = new Integer[3][3];
+                diagonals = new Integer[2][3];
                 return true;
             }
         }
@@ -975,11 +1523,17 @@ class TICTACTOE extends ListenerAdapter {
             if(sum(column) == -3){
                 printArr(rows);
                 d.getChannel().sendMessage("I Win! Good Game.").queue();
+                rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
+                columns = new Integer[3][3];
+                diagonals = new Integer[2][3];
                 return true;
             }
             if(sum(column) == 3){
                 printArr(rows);
                 d.getChannel().sendMessage("You Win :( Good Game.").queue();
+                rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
+                columns = new Integer[3][3];
+                diagonals = new Integer[2][3];
                 return true;
             }
         }
@@ -987,11 +1541,17 @@ class TICTACTOE extends ListenerAdapter {
             if(sum(diagonal) == -3){
                 printArr(rows);
                 d.getChannel().sendMessage("I Win! Good Game.").queue();
+                rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
+                columns = new Integer[3][3];
+                diagonals = new Integer[2][3];
                 return true;
             }
             if(sum(diagonal) == 3){
                 printArr(rows);
                 d.getChannel().sendMessage("You Win :( Good Game.").queue();
+                rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
+                columns = new Integer[3][3];
+                diagonals = new Integer[2][3];
                 return true;
             }
         }
@@ -1006,6 +1566,9 @@ class TICTACTOE extends ListenerAdapter {
         }
         if(filled == 9){
             d.getChannel().sendMessage("Draw! Good Game.").queue();
+            rows =new Integer[][]{{0,0,0},{0,0,0},{0,0,0}};
+            columns = new Integer[3][3];
+            diagonals = new Integer[2][3];
             return true;
         }
         return false;
