@@ -15,7 +15,7 @@ import java.util.*;
 public class hi {
 
     public static void main(String[] args) throws javax.security.auth.login.LoginException, IOException {
-        JDA jda = new JDABuilder("NzA3NjI5Mjk1MTUzMDUzNzY4.XsSaMg.WHBIN2BgwyEWwxPToA3VtlC4ghE").build();
+        JDA jda = new JDABuilder("").build();
         jda.addEventListener(new TICTACTOE());
     }
 }
