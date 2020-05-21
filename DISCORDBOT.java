@@ -1500,6 +1500,7 @@ class TICTACTOE extends ListenerAdapter {
             event.getChannel().sendMessage(", and t!frow1, t!frow2, t!frow3, t!frow4 for the rows").queue();
             event.getChannel().sendMessage("Chess notation is also available. For example to play in the bottom-left corner, use t!fa1.").queue();
             event.getChannel().sendMessage("To check the top five players, use t!frank").queue();
+            event.getChannel().sendMessage("You can also play connect 4 using t!cchallenge <player>, t!ccol1-4, and t!crank to check stats.").queue();
             event.getChannel().sendMessage("t!help4 will bring you to the fourth page of help documentation").queue();
             return;
         }
