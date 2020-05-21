@@ -15,7 +15,7 @@ import java.util.*;
 public class hi {
 
     public static void main(String[] args) throws javax.security.auth.login.LoginException, IOException {
-        JDA jda = new JDABuilder("").build();
+        JDA jda = new JDABuilder("NzA3NjI5Mjk1MTUzMDUzNzY4.XsSaMg.WHBIN2BgwyEWwxPToA3VtlC4ghE").build();
         jda.addEventListener(new TICTACTOE());
     }
 }
@@ -67,7 +67,11 @@ class TICTACTOE extends ListenerAdapter {
             put(Arrays.toString(new Integer[]{2,0}), new Integer[]{0,2});
         }
     };
-
+    static int accepted;
+    static Member buyer;
+    static Member seller;
+    static int item;
+    static Double price;
     public static Integer[][] frows = new Integer[4][4];
     public static Integer[][] fcolumns = new Integer[4][4];
     public static Integer[][] fdiagonals = new Integer[2][4];
@@ -178,14 +182,6 @@ class TICTACTOE extends ListenerAdapter {
         return 24;
     }
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
-
-        Date date = new Date();
-        Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(date);
-
-        Message m = event.getMessage();
-        String messageSent = m.getContentRaw();
-        d=event;
         try {
             shop.put("theodore_gold", Math.round(getStock1()*100000.0)/1000.0);
             shop.put("theodore_vanguard", Math.round(getStock2()*1000.0)/1000.0);
@@ -199,6 +195,179 @@ class TICTACTOE extends ListenerAdapter {
             shop.put("theodore_disney",Math.round(getStock10()*4000.0)/1000.0);
 
         }catch(Exception e){}
+
+        Message m = event.getMessage();
+        String messageSent = m.getContentRaw();
+        d=event;
+        if(messageSent.equalsIgnoreCase("t!deny")){
+            if(accepted==1){
+            if(event.getMember().equals(buyer)){
+                accepted=0;
+                return;
+            }else{
+                event.getChannel().sendMessage("Wrong User!").queue();
+            }}
+        }
+        if(messageSent.equalsIgnoreCase("t!accept")){
+            if(accepted==1){
+            if(event.getMember().equals(buyer)){
+                if(bank.get(buyer.getEffectiveName())<price){
+                    event.getChannel().sendMessage("You cannot afford this item!").queue();
+                }else{
+                    bank.put(buyer.getEffectiveName(),bank.get(buyer.getEffectiveName())-price);
+                    bank.put(seller.getEffectiveName(),bank.get(seller.getEffectiveName())+price);
+                    Integer[] temp = amount.get(buyer.getEffectiveName());
+                    Integer[] temp2 = amount.get(seller.getEffectiveName());
+                    temp[item]= temp[item]+1;
+                    temp2[item]=temp2[item]-1;
+                    amount.put(buyer.getEffectiveName(), temp);
+                    amount.put(seller.getEffectiveName(), temp2);
+                }
+                Role gold = event.getGuild().getRolesByName("gold", true).get(0);
+                Role vanguard = event.getGuild().getRolesByName("vanguard", true).get(0);
+                Role bitcoin = event.getGuild().getRolesByName("bitcoin", true).get(0);
+                Role nintendo = event.getGuild().getRolesByName("nintendo", true).get(0);
+                Role moderna = event.getGuild().getRolesByName("moderna", true).get(0);
+                Role samsung = event.getGuild().getRolesByName("samsung", true).get(0);
+                Role yelp = event.getGuild().getRolesByName("yelp", true).get(0);
+                Role delta = event.getGuild().getRolesByName("delta", true).get(0);
+                Role novartis = event.getGuild().getRolesByName("novartis", true).get(0);
+                Role disney = event.getGuild().getRolesByName("disney", true).get(0);
+                for(Member member: event.getGuild().getMembers()){
+                    if(amount.containsKey(member.getEffectiveName())){
+                        event.getGuild().removeRoleFromMember(member, gold).complete();
+                        event.getGuild().removeRoleFromMember(member, vanguard).complete();
+                        event.getGuild().removeRoleFromMember(member, bitcoin).complete();
+                        event.getGuild().removeRoleFromMember(member, nintendo).complete();
+                        event.getGuild().removeRoleFromMember(member, moderna).complete();
+                        event.getGuild().removeRoleFromMember(member, samsung).complete();
+                        event.getGuild().removeRoleFromMember(member, yelp).complete();
+                        event.getGuild().removeRoleFromMember(member, delta).complete();
+                        event.getGuild().removeRoleFromMember(member, novartis).complete();
+                        event.getGuild().removeRoleFromMember(member, disney).complete();
+                        Integer[] temp = amount.get(member.getEffectiveName());
+                        for(int i=0; i<10; i++){
+                            if(temp[i]>0){
+                                event.getGuild().addRoleToMember(member, event.getGuild().getRolesByName(shopconvert(i), true).get(0)).complete();
+                            }
+                        }
+                    }
+                }
+                HashSet<Role> hgold = new HashSet<Role>();
+                HashSet<Role> hvanguard = new HashSet<Role>();
+                HashSet<Role> hbitcoin = new HashSet<Role>();
+                HashSet<Role> hnintendo = new HashSet<Role>();
+                HashSet<Role> hmoderna = new HashSet<Role>();
+                HashSet<Role> hsamsung = new HashSet<Role>();
+                HashSet<Role> hyelp = new HashSet<Role>();
+                HashSet<Role> hdelta = new HashSet<Role>();
+                HashSet<Role> hnovartis = new HashSet<Role>();
+                HashSet<Role> hdisney = new HashSet<Role>();
+                hgold.add(gold);
+                hvanguard.add(vanguard);
+                hbitcoin.add(bitcoin);
+                hnintendo.add(nintendo);
+                hmoderna.add(moderna);
+                hsamsung.add(samsung);
+                hyelp.add(yelp);
+                hdelta.add(delta);
+                hnovartis.add(novartis);
+                hdisney.add(disney);
+
+
+                List<Emote> x = event.getGuild().getEmotes();
+                for (Emote n :x){
+
+                    if(n.getName().equalsIgnoreCase("theodore_gold")){
+                        n.getManager().setName(n.getName()).setRoles(hgold).queue();
+                        continue;
+                    }
+                    if(n.getName().equalsIgnoreCase("theodore_vanguard")){
+                        n.getManager().setName(n.getName()).setRoles(hvanguard).queue();
+                        continue;
+                    }
+                    if(n.getName().equalsIgnoreCase("theodore_bitcoin")){
+                        n.getManager().setName(n.getName()).setRoles(hbitcoin).queue();
+                        continue;
+                    }
+                    if(n.getName().equalsIgnoreCase("theodore_nintendo")){
+                        n.getManager().setName(n.getName()).setRoles(hnintendo).queue();
+                        continue;
+                    }
+                    if(n.getName().equalsIgnoreCase("theodore_moderna")){
+                        n.getManager().setName(n.getName()).setRoles(hmoderna).queue();
+                        continue;
+                    }
+                    if(n.getName().equalsIgnoreCase("theodore_samsung")){
+                        n.getManager().setName(n.getName()).setRoles(hsamsung).queue();
+                        continue;
+                    }
+                    if(n.getName().equalsIgnoreCase("theodore_yelp")){
+                        n.getManager().setName(n.getName()).setRoles(hyelp).queue();
+                        continue;
+                    }
+                    if(n.getName().equalsIgnoreCase("theodore_delta")){
+                        n.getManager().setName(n.getName()).setRoles(hdelta).queue();
+                        continue;
+                    }
+                    if(n.getName().equalsIgnoreCase("theodore_novartis")){
+                        n.getManager().setName(n.getName()).setRoles(hnovartis).queue();
+                        continue;
+                    }
+                    if(n.getName().equalsIgnoreCase("theodore_disney")){
+                        n.getManager().setName(n.getName()).setRoles(hdisney).queue();
+                    }
+
+                }
+                event.getChannel().sendMessage("Sale Complete!").queue();
+                accepted=0;
+                return;
+            }else{
+                event.getChannel().sendMessage("Wrong User!").queue();
+                accepted=0;
+                return;
+            }
+            }
+
+        }
+        if(!event.getAuthor().isBot()) {
+            accepted = 0;
+        }
+        if(messageSent.equalsIgnoreCase("t!stock")){
+            if(amount.isEmpty()){
+                try{
+                    BufferedReader f = new BufferedReader(new FileReader("amount.txt"));
+                    int i= Integer.parseInt(f.readLine());
+                    for(int d=0; d<i; d++){
+                        StringTokenizer st = new StringTokenizer(f.readLine());
+                        String name = st.nextToken();
+                        Integer[] temp = new Integer[10];
+                        for(int s=0; s<10; s++){
+                            temp[s]=Integer.parseInt(st.nextToken());
+                        }
+                        amount.put(name,temp);
+                    }
+                }catch(Exception e){}
+            }
+            if(bank.isEmpty()){
+                try{
+                    BufferedReader f = new BufferedReader(new FileReader("bank.txt"));
+                    int i =Integer.parseInt(f.readLine());
+                    for(int d=0; d<i; d++){
+                        StringTokenizer st = new StringTokenizer(f.readLine());
+                        bank.put(st.nextToken(), Double.parseDouble(st.nextToken()));
+                    }
+                }catch(Exception e){ }}
+            if(!amount.containsKey(event.getMember().getEffectiveName())){
+                amount.put(event.getMember().getEffectiveName(), new Integer[]{0,0,0,0,0,0,0,0,0,0});
+            }
+            Integer[] stocks = amount.get(event.getMember().getEffectiveName());
+            for(int i=0; i<10; i++){
+                event.getChannel().sendMessage(shopconvert(i) +" Amount: "+stocks[i]).queue();
+            }
+            event.getChannel().sendMessage("This is your current Portfolio").queue();
+            return;
+        }
         if(messageSent.equalsIgnoreCase("t!shop")){
             if(amount.isEmpty()){
                 try{
@@ -229,6 +398,76 @@ class TICTACTOE extends ListenerAdapter {
                 event.getChannel().sendMessage("You can buy "+x+" for "+shop.get(x)+" toastcoin.").queue();
             }
             event.getChannel().sendMessage("These are the contents of the shop").queue();
+        }
+        if(!event.getAuthor().isBot()){
+            if(messageSent.contains("t!sell")){
+                if(amount.isEmpty()){
+                    try{
+                        BufferedReader f = new BufferedReader(new FileReader("amount.txt"));
+                        int i= Integer.parseInt(f.readLine());
+                        for(int d=0; d<i; d++){
+                            StringTokenizer st = new StringTokenizer(f.readLine());
+                            String name = st.nextToken();
+                            Integer[] temp = new Integer[10];
+                            for(int s=0; s<10; s++){
+                                temp[s]=Integer.parseInt(st.nextToken());
+                            }
+                            amount.put(name,temp);
+                        }
+                    }catch(Exception e){}
+                }
+                if(bank.isEmpty()){
+                    try{
+                        BufferedReader f = new BufferedReader(new FileReader("bank.txt"));
+                        int i =Integer.parseInt(f.readLine());
+                        for(int d=0; d<i; d++){
+                            StringTokenizer st = new StringTokenizer(f.readLine());
+                            bank.put(st.nextToken(), Double.parseDouble(st.nextToken()));
+                        }
+                    }catch(Exception e){ }}
+                try{
+                    buyer = event.getMessage().getMentionedMembers().get(0);
+                }catch(Exception e){
+                    return;
+                }
+
+                seller = event.getMember();
+                StringTokenizer st = new StringTokenizer(messageSent);
+                st.nextToken();
+                st.nextToken();
+                String item1 = st.nextToken();
+                item = shopconvert(item1);
+                if(item==24){
+                    event.getChannel().sendMessage("Invalid Item").queue();
+                    return;
+                }
+                price = Double.parseDouble(st.nextToken());
+                if(price <0.0){
+                    event.getChannel().sendMessage("You cannot sell items for less that 0 toastcoin!").queue();
+                    return;
+                }
+                if(!amount.containsKey(event.getMember().getEffectiveName())){
+                    amount.put(event.getMember().getEffectiveName(), new Integer[]{0,0,0,0,0,0,0,0,0,0});
+                    event.getChannel().sendMessage("You cannot sell items that you don't have!").queue();
+                    return;
+                }
+                if(!bank.containsKey(buyer.getEffectiveName())){
+                    bank.put(buyer.getEffectiveName(), 0.0);
+                }
+                if(!bank.containsKey(event.getMember().getEffectiveName())){
+                    bank.put(event.getMember().getEffectiveName(), 0.0);
+                }
+                if(!amount.containsKey(buyer.getEffectiveName())){
+                    amount.put(buyer.getEffectiveName(),new Integer[]{0,0,0,0,0,0,0,0,0,0} );
+                }
+                if((amount.get(seller.getEffectiveName()))[item]>0){
+                    accepted=1;
+                    event.getChannel().sendMessage("Waiting on "+buyer.getEffectiveName()+" to respond. Use t!accept or t!deny").queue();
+                    return;
+                }
+
+
+            }
         }
         if(!event.getAuthor().isBot()){
             if(messageSent.contains("t!buy")){
@@ -271,6 +510,7 @@ class TICTACTOE extends ListenerAdapter {
                             Integer[] temp = amount.get(event.getMember().getEffectiveName());
                             temp[shopconvert(item)] = temp[shopconvert(item)]+1;
                             amount.put(event.getMember().getEffectiveName(),temp);
+
                         }
                         else{
                             event.getChannel().sendMessage("You cannot afford this item.").queue();
@@ -292,21 +532,21 @@ class TICTACTOE extends ListenerAdapter {
                 Role novartis = event.getGuild().getRolesByName("novartis", true).get(0);
                 Role disney = event.getGuild().getRolesByName("disney", true).get(0);
                 for(Member member: event.getGuild().getMembers()){
-                    event.getGuild().removeRoleFromMember(member, gold).queue();
-                    event.getGuild().removeRoleFromMember(member, vanguard).queue();
-                    event.getGuild().removeRoleFromMember(member, bitcoin).queue();
-                    event.getGuild().removeRoleFromMember(member, nintendo).queue();
-                    event.getGuild().removeRoleFromMember(member, moderna).queue();
-                    event.getGuild().removeRoleFromMember(member, samsung).queue();
-                    event.getGuild().removeRoleFromMember(member, yelp).queue();
-                    event.getGuild().removeRoleFromMember(member, delta).queue();
-                    event.getGuild().removeRoleFromMember(member, novartis).queue();
-                    event.getGuild().removeRoleFromMember(member, disney).queue();
                     if(amount.containsKey(member.getEffectiveName())){
+                        event.getGuild().removeRoleFromMember(member, gold).complete();
+                        event.getGuild().removeRoleFromMember(member, vanguard).complete();
+                        event.getGuild().removeRoleFromMember(member, bitcoin).complete();
+                        event.getGuild().removeRoleFromMember(member, nintendo).complete();
+                        event.getGuild().removeRoleFromMember(member, moderna).complete();
+                        event.getGuild().removeRoleFromMember(member, samsung).complete();
+                        event.getGuild().removeRoleFromMember(member, yelp).complete();
+                        event.getGuild().removeRoleFromMember(member, delta).complete();
+                        event.getGuild().removeRoleFromMember(member, novartis).complete();
+                        event.getGuild().removeRoleFromMember(member, disney).complete();
                         Integer[] temp = amount.get(member.getEffectiveName());
                         for(int i=0; i<10; i++){
                             if(temp[i]>0){
-                                event.getGuild().addRoleToMember(member, event.getGuild().getRolesByName(shopconvert(i), true).get(0)).queue();
+                                event.getGuild().addRoleToMember(member, event.getGuild().getRolesByName(shopconvert(i), true).get(0)).complete();
                             }
                         }
                     }
@@ -375,7 +615,7 @@ class TICTACTOE extends ListenerAdapter {
                     }
 
                 }
-
+                event.getChannel().sendMessage("Item Bought!").queue();
                 return;
             }
         }
@@ -1084,7 +1324,19 @@ class TICTACTOE extends ListenerAdapter {
             event.getChannel().sendMessage(", and t!frow1, t!frow2, t!frow3, t!frow4 for the rows").queue();
             event.getChannel().sendMessage("Chess notation is also available. For example to play in the bottom-left corner, use t!fa1.").queue();
             event.getChannel().sendMessage("To check the top five players, use t!frank").queue();
-            event.getChannel().sendMessage("Enjoy fellow Exonians!").queue();
+            event.getChannel().sendMessage("t!help4 will bring you to the fourth page of help documentation").queue();
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!help4")){
+            event.getChannel().sendMessage("This is page 4 of help.").queue();
+            event.getChannel().sendMessage("There is also an economy based off of a currency-Toastcoin.").queue();
+            event.getChannel().sendMessage("There is a shop, accessible through t!shop, with prices based off of that of rea;-world stock.").queue();
+            event.getChannel().sendMessage("Every win against another player gives you 100 Toastcoin, every draw 30, and every loss 10, so you always win!").queue();
+            event.getChannel().sendMessage("Check your current balance with t!balance").queue();
+            event.getChannel().sendMessage("The shop sells emoji, and you can buy several of the same emoji. You can buy these emoji from the store using t!buy <item_name>.").queue();
+            event.getChannel().sendMessage("You can sell these emoji to other players using t!sell <player> <item_name> <price>. This price can be whatever you want, but make sure to choose wisely to gain profits. Always use a decimal point for the stock price, even if the price is an integer.").queue();
+            event.getChannel().sendMessage("Try to gain as much toastcoin as possible by buying and selling these stock. You can check how much of each you have using t!stock.").queue();
+            event.getChannel().sendMessage("Happy Trading!").queue();
             return;
         }
 
