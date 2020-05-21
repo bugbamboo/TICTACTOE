@@ -15,7 +15,7 @@ import java.util.*;
 public class hi {
 
     public static void main(String[] args) throws javax.security.auth.login.LoginException, IOException {
-        JDA jda = new JDABuilder("").build();
+        JDA jda = new JDABuilder("NzA3NjI5Mjk1MTUzMDUzNzY4.XsXN_Q.wZupHKBycUK1dHtSZvB51Bs5Rqo").build();
         jda.addEventListener(new TICTACTOE());
     }
 }
@@ -84,6 +84,7 @@ class TICTACTOE extends ListenerAdapter {
 
     public static HashMap<String, Double> rank = new HashMap<String,Double>();
     public static HashMap<String, Double> frank = new HashMap<String,Double>();
+    static HashMap<String, Double> crank = new HashMap<String, Double>();
     public static HashMap<String, Integer[]> amount = new HashMap<String, Integer[]>();
     public double getStock1() throws IOException {
         return YahooFinance.get("AUY").getQuote().getPrice().doubleValue();
@@ -683,6 +684,9 @@ class TICTACTOE extends ListenerAdapter {
                 if(frank.containsKey(member.getEffectiveName())){
                     count += frank.get(member.getEffectiveName());
                 }
+                if(crank.containsKey(member.getEffectiveName())){
+                    count += crank.get(member.getEffectiveName());
+                }
 
                 if(count>=15.0||member.getEffectiveName().equalsIgnoreCase("Achyuta")||member.getEffectiveName().equalsIgnoreCase("Debbie")) {
                     event.getGuild().addRoleToMember(member,rfive).queue();
@@ -717,10 +721,12 @@ class TICTACTOE extends ListenerAdapter {
                 PrintWriter out2 = new PrintWriter(new BufferedWriter(new FileWriter("frank.txt")));
                 PrintWriter out3 = new PrintWriter(new BufferedWriter(new FileWriter("bank.txt")));
                 PrintWriter out4 = new PrintWriter(new BufferedWriter(new FileWriter("amount.txt")));
+                PrintWriter out5 = new PrintWriter(new BufferedWriter(new FileWriter("crank.txt")));
                 out.println(rank.size());
                 out2.println(frank.size());
                 out3.println(bank.size());
                 out4.println(amount.size());
+                out5.println(crank.size());
                 for (Member h : event.getGuild().getMembers()) {
                     if (rank.containsKey(h.getEffectiveName())) {
                         out.println(h.getEffectiveName() + " " + rank.get(h.getEffectiveName()));
@@ -734,12 +740,16 @@ class TICTACTOE extends ListenerAdapter {
                     if(amount.containsKey(h.getEffectiveName())){
                         out4.println(h.getEffectiveName()+" "+amount.get(h.getEffectiveName())[0]+" "+amount.get(h.getEffectiveName())[1]+" "+amount.get(h.getEffectiveName())[2]+" "+amount.get(h.getEffectiveName())[3]+" "+amount.get(h.getEffectiveName())[4]+" "+amount.get(h.getEffectiveName())[5]+" "+amount.get(h.getEffectiveName())[6]+" "+amount.get(h.getEffectiveName())[7]+" "+amount.get(h.getEffectiveName())[8]+" "+amount.get(h.getEffectiveName())[9]);
                     }
+                    if (crank.containsKey(h.getEffectiveName())) {
+                        out5.println(h.getEffectiveName() + " " + crank.get(h.getEffectiveName()));
+                    }
                 }
 
                 out.close();
                 out2.close();
                 out3.close();
                 out4.close();
+                out5.close();
             } catch (Exception e) {
             }
             System.exit(0);
@@ -765,6 +775,22 @@ class TICTACTOE extends ListenerAdapter {
             event.getChannel().sendMessage("Current top 5:").queue();
             sorted = new TreeMap<String, Double>(new ValueComparator(frank));
             sorted.putAll(frank);
+            Object[] arr = sorted.entrySet().toArray();
+            if(arr.length<5){
+                for(Object x:arr ){
+                    event.getChannel().sendMessage(x.toString()).queue();
+                }
+            }else{
+                for(int i=0; i<5; i++){
+                    event.getChannel().sendMessage(arr[i].toString()).queue();
+                }
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!crank")){
+            event.getChannel().sendMessage("Current top 5:").queue();
+            sorted = new TreeMap<String, Double>(new ValueComparator(crank));
+            sorted.putAll(crank);
             Object[] arr = sorted.entrySet().toArray();
             if(arr.length<5){
                 for(Object x:arr ){
@@ -808,7 +834,16 @@ class TICTACTOE extends ListenerAdapter {
                             rank.put(st.nextToken(), Double.parseDouble(st.nextToken()));
                         }
                     }catch(Exception e){ }}
-
+                if(crank.isEmpty()){
+                    BufferedReader f;
+                    try{
+                        f = new BufferedReader(new FileReader("crank.txt"));
+                        int i =Integer.parseInt(f.readLine());
+                        for(int d=0; d<i; d++){
+                            StringTokenizer st = new StringTokenizer(f.readLine());
+                            crank.put(st.nextToken(), Double.parseDouble(st.nextToken()));
+                        }
+                    }catch(Exception e){ }}
 
                 player =1;
                 StringTokenizer st = new StringTokenizer(messageSent);
@@ -1069,6 +1104,137 @@ class TICTACTOE extends ListenerAdapter {
             }
             return;
         }
+
+        if(!event.getMember().getUser().isBot()) {
+            if (messageSent.contains("t!cchallenge")) {
+                if(bank.isEmpty()){
+                    try{
+                        BufferedReader f = new BufferedReader(new FileReader("bank.txt"));
+                        int i =Integer.parseInt(f.readLine());
+                        for(int d=0; d<i; d++){
+                            StringTokenizer st = new StringTokenizer(f.readLine());
+                            bank.put(st.nextToken(), Double.parseDouble(st.nextToken()));
+                        }
+                    }catch(Exception e){ }}
+                if(frank.isEmpty()){
+
+                    try{
+                        BufferedReader f = new BufferedReader(new FileReader("frank.txt"));
+                        int i =Integer.parseInt(f.readLine());
+                        for(int d=0; d<i; d++){
+                            StringTokenizer st = new StringTokenizer(f.readLine());
+                            frank.put(st.nextToken(), Double.parseDouble(st.nextToken()));
+                        }
+                    }catch(Exception e){ }}
+                if(rank.isEmpty()){
+                    BufferedReader f;
+                    try{
+                        f = new BufferedReader(new FileReader("rank.txt"));
+                        int i =Integer.parseInt(f.readLine());
+                        for(int d=0; d<i; d++){
+                            StringTokenizer st = new StringTokenizer(f.readLine());
+                            rank.put(st.nextToken(), Double.parseDouble(st.nextToken()));
+                        }
+                    }catch(Exception e){ }}
+                if(crank.isEmpty()){
+                    BufferedReader f;
+                    try{
+                        f = new BufferedReader(new FileReader("crank.txt"));
+                        int i =Integer.parseInt(f.readLine());
+                        for(int d=0; d<i; d++){
+                            StringTokenizer st = new StringTokenizer(f.readLine());
+                            crank.put(st.nextToken(), Double.parseDouble(st.nextToken()));
+                        }
+                    }catch(Exception e){ }}
+                fcolumns =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                conprocess();
+                player =1;
+                StringTokenizer st = new StringTokenizer(messageSent);
+                st.nextToken();
+                challenger=event.getMember().getEffectiveName();
+                name1=challenger;
+                try {
+                    challenged = st.nextToken();
+                    name2 = event.getMessage().getMentionedMembers().get(0).getEffectiveName();
+                }catch(Exception e) {
+                }
+                if(!crank.containsKey(name1)){
+                    crank.put(name1,0.0);
+                }
+                if(!crank.containsKey(name2)){
+                    crank.put(name2,0.0);
+                }
+                if(!bank.containsKey(name1)){
+                    bank.put(name1,0.0);
+                }
+                if(!bank.containsKey(name2)){
+                    bank.put(name2,0.0);
+                }
+                event.getChannel().sendMessage(challenger+" challenges " +challenged+" to a game of Connect Four").queue();
+                event.getChannel().sendMessage("Play a move @"+challenger+". Enter the column that you want to play in.").queue();
+                return;
+            }
+        }
+        if(messageSent.equalsIgnoreCase("t!ccol1")){
+            inputC =1;
+            int i=0;
+            for(int x: fcolumns[inputC-1]){
+                if(x==0){
+                    i++;
+                }
+            }
+            if(i>0){
+                conInput();
+            }else{
+                event.getChannel().sendMessage("This column is full").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!ccol2")){
+            inputC =2;
+            int i=0;
+            for(int x: fcolumns[inputC-1]){
+                if(x==0){
+                    i++;
+                }
+            }
+            if(i>0){
+                conInput();
+            }else{
+                event.getChannel().sendMessage("This column is full").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!ccol3")){
+            inputC =3;
+            int i=0;
+            for(int x: fcolumns[inputC-1]){
+                if(x==0){
+                    i++;
+                }
+            }
+            if(i>0){
+                conInput();
+            }else{
+                event.getChannel().sendMessage("This column is full").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!ccol4")){
+            inputC =4;
+            int i=0;
+            for(int x: fcolumns[inputC-1]){
+                if(x==0){
+                    i++;
+                }
+            }
+            if(i>0){
+                conInput();
+            }else{
+                event.getChannel().sendMessage("This column is full").queue();
+            }
+            return;
+        }
         if(!event.getMember().getUser().isBot()) {
             if (messageSent.contains("t!fchallenge")) {
                 if(bank.isEmpty()){
@@ -1098,6 +1264,16 @@ class TICTACTOE extends ListenerAdapter {
                         for(int d=0; d<i; d++){
                             StringTokenizer st = new StringTokenizer(f.readLine());
                             rank.put(st.nextToken(), Double.parseDouble(st.nextToken()));
+                        }
+                    }catch(Exception e){ }}
+                if(crank.isEmpty()){
+                    BufferedReader f;
+                    try{
+                        f = new BufferedReader(new FileReader("crank.txt"));
+                        int i =Integer.parseInt(f.readLine());
+                        for(int d=0; d<i; d++){
+                            StringTokenizer st = new StringTokenizer(f.readLine());
+                            crank.put(st.nextToken(), Double.parseDouble(st.nextToken()));
                         }
                     }catch(Exception e){ }}
                 frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
@@ -1532,6 +1708,40 @@ class TICTACTOE extends ListenerAdapter {
         plusses = new Integer[][]{{frows[0][1],frows[1][0],frows[2][1],frows[1][2]},{frows[0][2],frows[1][1],frows[2][2],frows[1][3]},{frows[1][1],frows[2][0],frows[3][1],frows[2][2]},{frows[1][2],frows[2][1],frows[3][2],frows[2][3]}};
         crosses = new Integer[][]{{frows[0][0],frows[1][1],frows[2][2],frows[0][2],frows[2][0]},{frows[0][1],frows[1][2],frows[2][3],frows[0][3],frows[2][1]},{frows[1][0],frows[2][1],frows[3][2],frows[1][2],frows[3][0]},{frows[1][1],frows[2][2],frows[3][3],frows[1][3],frows[3][1]}};
     }
+    public static void conprocess() {
+        frows = new Integer[][]{{fcolumns[0][0], fcolumns[1][0], fcolumns[2][0], fcolumns[3][0]}, {fcolumns[0][1], fcolumns[1][1], fcolumns[2][1], fcolumns[3][1]}, {fcolumns[0][2], fcolumns[1][2], fcolumns[2][2], fcolumns[3][2]}, {fcolumns[0][3], fcolumns[1][3], fcolumns[2][3], fcolumns[3][3]}};
+        fdiagonals = new Integer[][]{{frows[0][0], frows[1][1], frows[2][2], frows[3][3]}, {frows[0][3], frows[1][2], frows[2][1], frows[3][0]}};
+    }
+    public static void conInput(){
+        conprocess();
+        int inputColumn;
+        inputColumn = inputC;
+        for(int d=3; d>-1; d--){
+            if(fcolumns[inputColumn-1][d]==0) {
+                fcolumns[inputColumn - 1][d] = player;
+                break;
+            }
+        }
+
+        if(player==1){
+            player=-1;
+        }
+        else if(player==-1){
+            player=1;
+        }
+        inputC=0;
+        conprocess();
+        fprint(frows);
+        if(conevaluate()){
+            return;
+        }
+        if(player==1) {
+            d.getChannel().sendMessage("@"+challenger+"'s Move. Enter the column that you want to play in.").queue();
+        }
+        if(player==-1) {
+            d.getChannel().sendMessage(challenged+"'s Move. Enter the column that you want to play in.").queue();
+        }
+    }
     public static void fInput(){
         fprocess();
         int inputColumn;
@@ -1559,6 +1769,97 @@ class TICTACTOE extends ListenerAdapter {
         if(player==-1) {
             d.getChannel().sendMessage(challenged+"'s Move. Enter the column that you want to play in.").queue();
         }
+    }
+    public static boolean conevaluate(){
+        conprocess();
+
+        for(Integer[] row : frows){
+            if(sum(row) == -4){
+                d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+                crank.put(name2,crank.get(name2)+1.0);
+                crank.put(name1,crank.get(name1)-1.0);
+                bank.put(name2,bank.get(name2)+100);
+                bank.put(name1,bank.get(name1)+10);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
+                return true;
+
+            }
+            if(sum(row) == 4){
+                d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                crank.put(name2,crank.get(name2)-1.0);
+                crank.put(name1,crank.get(name1)+1.0);
+                bank.put(name2,bank.get(name2)+10);
+                bank.put(name1,bank.get(name1)+100);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
+                return true;
+            }
+        }
+        for(Integer[] column : fcolumns){
+            if(sum(column) == -4){
+                d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+                crank.put(name2,crank.get(name2)+1.0);
+                crank.put(name1,crank.get(name1)-1.0);
+                bank.put(name2,bank.get(name2)+100);
+                bank.put(name1,bank.get(name1)+10);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
+                return true;
+            }
+            if(sum(column) == 4){
+                d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                crank.put(name2,crank.get(name2)-1.0);
+                crank.put(name1,crank.get(name1)+1.0);
+                bank.put(name2,bank.get(name2)+10);
+                bank.put(name1,bank.get(name1)+100);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
+                return true;
+            }
+        }
+        for(Integer[] diagonal : fdiagonals){
+            if(sum(diagonal) == -4){
+                d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+                crank.put(name2,crank.get(name2)+1.0);
+                crank.put(name1,crank.get(name1)-1.0);
+                bank.put(name2,bank.get(name2)+100);
+                bank.put(name1,bank.get(name1)+10);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
+                return true;
+            }
+            if(sum(diagonal) == 4){
+                d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                crank.put(name2,crank.get(name2)-1.0);
+                crank.put(name1,crank.get(name1)+1.0);
+                bank.put(name2,bank.get(name2)+10);
+                bank.put(name1,bank.get(name1)+100);
+                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                fprocess();
+                return true;
+            }
+        }
+        int filled = 0;
+        for(Integer[] arr : frows){
+            for(int point : arr){
+                if(point != 0){
+                    filled++;
+                }
+
+            }
+        }
+        if(filled == 16){
+            d.getChannel().sendMessage("Draw! Good Game.").queue();
+            crank.put(name2,crank.get(name2)+0.0);
+            crank.put(name1,crank.get(name1)+0.0);
+            bank.put(name2,bank.get(name2)+30);
+            bank.put(name1,bank.get(name1)+30);
+            frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+            fprocess();
+            return true;
+        }
+        return false;
     }
     public static boolean fevaluate(){
         fprocess();
