@@ -1,4 +1,3 @@
-
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Emote;
@@ -14,7 +13,7 @@ import java.util.*;
 
 public class hi {
 
-    public static void main(String[] args) throws javax.security.auth.login.LoginException, IOException {
+    public static void main(String[] args) throws javax.security.auth.login.LoginException {
         JDA jda = new JDABuilder("").build();
         jda.addEventListener(new TICTACTOE());
     }
@@ -75,6 +74,9 @@ class TICTACTOE extends ListenerAdapter {
     public static Integer[][] frows = new Integer[4][4];
     public static Integer[][] fcolumns = new Integer[4][4];
     public static Integer[][] fdiagonals = new Integer[2][4];
+    public static Integer[][] conrows = new Integer[7][7];
+    public static Integer[][] concolumns = new Integer[7][7];
+    public static Integer[][] condiagonals = new Integer[32][4];
     public static Integer[][] crosses = new Integer[4][5];
     public static Integer[][] squares = new Integer[9][4];
     public static Integer[][] plusses = new Integer[4][4];
@@ -202,132 +204,132 @@ class TICTACTOE extends ListenerAdapter {
         d=event;
         if(messageSent.equalsIgnoreCase("t!deny")){
             if(accepted==1){
-            if(event.getMember().equals(buyer)){
-                accepted=0;
-                return;
-            }else{
-                event.getChannel().sendMessage("Wrong User!").queue();
-            }}
+                if(event.getMember().equals(buyer)){
+                    accepted=0;
+                    return;
+                }else{
+                    event.getChannel().sendMessage("Wrong User!").queue();
+                }}
         }
         if(messageSent.equalsIgnoreCase("t!accept")){
             if(accepted==1){
-            if(event.getMember().equals(buyer)){
-                if(bank.get(buyer.getEffectiveName())<price){
-                    event.getChannel().sendMessage("You cannot afford this item!").queue();
-                }else{
-                    bank.put(buyer.getEffectiveName(),bank.get(buyer.getEffectiveName())-price);
-                    bank.put(seller.getEffectiveName(),bank.get(seller.getEffectiveName())+price);
-                    Integer[] temp = amount.get(buyer.getEffectiveName());
-                    Integer[] temp2 = amount.get(seller.getEffectiveName());
-                    temp[item]= temp[item]+1;
-                    temp2[item]=temp2[item]-1;
-                    amount.put(buyer.getEffectiveName(), temp);
-                    amount.put(seller.getEffectiveName(), temp2);
-                }
-                Role gold = event.getGuild().getRolesByName("gold", true).get(0);
-                Role vanguard = event.getGuild().getRolesByName("vanguard", true).get(0);
-                Role bitcoin = event.getGuild().getRolesByName("bitcoin", true).get(0);
-                Role nintendo = event.getGuild().getRolesByName("nintendo", true).get(0);
-                Role moderna = event.getGuild().getRolesByName("moderna", true).get(0);
-                Role samsung = event.getGuild().getRolesByName("samsung", true).get(0);
-                Role yelp = event.getGuild().getRolesByName("yelp", true).get(0);
-                Role delta = event.getGuild().getRolesByName("delta", true).get(0);
-                Role novartis = event.getGuild().getRolesByName("novartis", true).get(0);
-                Role disney = event.getGuild().getRolesByName("disney", true).get(0);
-                for(Member member: event.getGuild().getMembers()){
-                    if(amount.containsKey(member.getEffectiveName())){
-                        event.getGuild().removeRoleFromMember(member, gold).complete();
-                        event.getGuild().removeRoleFromMember(member, vanguard).complete();
-                        event.getGuild().removeRoleFromMember(member, bitcoin).complete();
-                        event.getGuild().removeRoleFromMember(member, nintendo).complete();
-                        event.getGuild().removeRoleFromMember(member, moderna).complete();
-                        event.getGuild().removeRoleFromMember(member, samsung).complete();
-                        event.getGuild().removeRoleFromMember(member, yelp).complete();
-                        event.getGuild().removeRoleFromMember(member, delta).complete();
-                        event.getGuild().removeRoleFromMember(member, novartis).complete();
-                        event.getGuild().removeRoleFromMember(member, disney).complete();
-                        Integer[] temp = amount.get(member.getEffectiveName());
-                        for(int i=0; i<10; i++){
-                            if(temp[i]>0){
-                                event.getGuild().addRoleToMember(member, event.getGuild().getRolesByName(shopconvert(i), true).get(0)).complete();
+                if(event.getMember().equals(buyer)){
+                    if(bank.get(buyer.getEffectiveName())<price){
+                        event.getChannel().sendMessage("You cannot afford this item!").queue();
+                    }else{
+                        bank.put(buyer.getEffectiveName(),bank.get(buyer.getEffectiveName())-price);
+                        bank.put(seller.getEffectiveName(),bank.get(seller.getEffectiveName())+price);
+                        Integer[] temp = amount.get(buyer.getEffectiveName());
+                        Integer[] temp2 = amount.get(seller.getEffectiveName());
+                        temp[item]= temp[item]+1;
+                        temp2[item]=temp2[item]-1;
+                        amount.put(buyer.getEffectiveName(), temp);
+                        amount.put(seller.getEffectiveName(), temp2);
+                    }
+                    Role gold = event.getGuild().getRolesByName("gold", true).get(0);
+                    Role vanguard = event.getGuild().getRolesByName("vanguard", true).get(0);
+                    Role bitcoin = event.getGuild().getRolesByName("bitcoin", true).get(0);
+                    Role nintendo = event.getGuild().getRolesByName("nintendo", true).get(0);
+                    Role moderna = event.getGuild().getRolesByName("moderna", true).get(0);
+                    Role samsung = event.getGuild().getRolesByName("samsung", true).get(0);
+                    Role yelp = event.getGuild().getRolesByName("yelp", true).get(0);
+                    Role delta = event.getGuild().getRolesByName("delta", true).get(0);
+                    Role novartis = event.getGuild().getRolesByName("novartis", true).get(0);
+                    Role disney = event.getGuild().getRolesByName("disney", true).get(0);
+                    for(Member member: event.getGuild().getMembers()){
+                        if(amount.containsKey(member.getEffectiveName())){
+                            event.getGuild().removeRoleFromMember(member, gold).complete();
+                            event.getGuild().removeRoleFromMember(member, vanguard).complete();
+                            event.getGuild().removeRoleFromMember(member, bitcoin).complete();
+                            event.getGuild().removeRoleFromMember(member, nintendo).complete();
+                            event.getGuild().removeRoleFromMember(member, moderna).complete();
+                            event.getGuild().removeRoleFromMember(member, samsung).complete();
+                            event.getGuild().removeRoleFromMember(member, yelp).complete();
+                            event.getGuild().removeRoleFromMember(member, delta).complete();
+                            event.getGuild().removeRoleFromMember(member, novartis).complete();
+                            event.getGuild().removeRoleFromMember(member, disney).complete();
+                            Integer[] temp = amount.get(member.getEffectiveName());
+                            for(int i=0; i<10; i++){
+                                if(temp[i]>0){
+                                    event.getGuild().addRoleToMember(member, event.getGuild().getRolesByName(shopconvert(i), true).get(0)).complete();
+                                }
                             }
                         }
                     }
+                    HashSet<Role> hgold = new HashSet<Role>();
+                    HashSet<Role> hvanguard = new HashSet<Role>();
+                    HashSet<Role> hbitcoin = new HashSet<Role>();
+                    HashSet<Role> hnintendo = new HashSet<Role>();
+                    HashSet<Role> hmoderna = new HashSet<Role>();
+                    HashSet<Role> hsamsung = new HashSet<Role>();
+                    HashSet<Role> hyelp = new HashSet<Role>();
+                    HashSet<Role> hdelta = new HashSet<Role>();
+                    HashSet<Role> hnovartis = new HashSet<Role>();
+                    HashSet<Role> hdisney = new HashSet<Role>();
+                    hgold.add(gold);
+                    hvanguard.add(vanguard);
+                    hbitcoin.add(bitcoin);
+                    hnintendo.add(nintendo);
+                    hmoderna.add(moderna);
+                    hsamsung.add(samsung);
+                    hyelp.add(yelp);
+                    hdelta.add(delta);
+                    hnovartis.add(novartis);
+                    hdisney.add(disney);
+
+
+                    List<Emote> x = event.getGuild().getEmotes();
+                    for (Emote n :x){
+
+                        if(n.getName().equalsIgnoreCase("theodore_gold")){
+                            n.getManager().setName(n.getName()).setRoles(hgold).queue();
+                            continue;
+                        }
+                        if(n.getName().equalsIgnoreCase("theodore_vanguard")){
+                            n.getManager().setName(n.getName()).setRoles(hvanguard).queue();
+                            continue;
+                        }
+                        if(n.getName().equalsIgnoreCase("theodore_bitcoin")){
+                            n.getManager().setName(n.getName()).setRoles(hbitcoin).queue();
+                            continue;
+                        }
+                        if(n.getName().equalsIgnoreCase("theodore_nintendo")){
+                            n.getManager().setName(n.getName()).setRoles(hnintendo).queue();
+                            continue;
+                        }
+                        if(n.getName().equalsIgnoreCase("theodore_moderna")){
+                            n.getManager().setName(n.getName()).setRoles(hmoderna).queue();
+                            continue;
+                        }
+                        if(n.getName().equalsIgnoreCase("theodore_samsung")){
+                            n.getManager().setName(n.getName()).setRoles(hsamsung).queue();
+                            continue;
+                        }
+                        if(n.getName().equalsIgnoreCase("theodore_yelp")){
+                            n.getManager().setName(n.getName()).setRoles(hyelp).queue();
+                            continue;
+                        }
+                        if(n.getName().equalsIgnoreCase("theodore_delta")){
+                            n.getManager().setName(n.getName()).setRoles(hdelta).queue();
+                            continue;
+                        }
+                        if(n.getName().equalsIgnoreCase("theodore_novartis")){
+                            n.getManager().setName(n.getName()).setRoles(hnovartis).queue();
+                            continue;
+                        }
+                        if(n.getName().equalsIgnoreCase("theodore_disney")){
+                            n.getManager().setName(n.getName()).setRoles(hdisney).queue();
+                        }
+
+                    }
+                    event.getChannel().sendMessage("Sale Complete!").queue();
+                    accepted=0;
+                    return;
+                }else{
+                    event.getChannel().sendMessage("Wrong User!").queue();
+                    accepted=0;
+                    return;
                 }
-                HashSet<Role> hgold = new HashSet<Role>();
-                HashSet<Role> hvanguard = new HashSet<Role>();
-                HashSet<Role> hbitcoin = new HashSet<Role>();
-                HashSet<Role> hnintendo = new HashSet<Role>();
-                HashSet<Role> hmoderna = new HashSet<Role>();
-                HashSet<Role> hsamsung = new HashSet<Role>();
-                HashSet<Role> hyelp = new HashSet<Role>();
-                HashSet<Role> hdelta = new HashSet<Role>();
-                HashSet<Role> hnovartis = new HashSet<Role>();
-                HashSet<Role> hdisney = new HashSet<Role>();
-                hgold.add(gold);
-                hvanguard.add(vanguard);
-                hbitcoin.add(bitcoin);
-                hnintendo.add(nintendo);
-                hmoderna.add(moderna);
-                hsamsung.add(samsung);
-                hyelp.add(yelp);
-                hdelta.add(delta);
-                hnovartis.add(novartis);
-                hdisney.add(disney);
-
-
-                List<Emote> x = event.getGuild().getEmotes();
-                for (Emote n :x){
-
-                    if(n.getName().equalsIgnoreCase("theodore_gold")){
-                        n.getManager().setName(n.getName()).setRoles(hgold).queue();
-                        continue;
-                    }
-                    if(n.getName().equalsIgnoreCase("theodore_vanguard")){
-                        n.getManager().setName(n.getName()).setRoles(hvanguard).queue();
-                        continue;
-                    }
-                    if(n.getName().equalsIgnoreCase("theodore_bitcoin")){
-                        n.getManager().setName(n.getName()).setRoles(hbitcoin).queue();
-                        continue;
-                    }
-                    if(n.getName().equalsIgnoreCase("theodore_nintendo")){
-                        n.getManager().setName(n.getName()).setRoles(hnintendo).queue();
-                        continue;
-                    }
-                    if(n.getName().equalsIgnoreCase("theodore_moderna")){
-                        n.getManager().setName(n.getName()).setRoles(hmoderna).queue();
-                        continue;
-                    }
-                    if(n.getName().equalsIgnoreCase("theodore_samsung")){
-                        n.getManager().setName(n.getName()).setRoles(hsamsung).queue();
-                        continue;
-                    }
-                    if(n.getName().equalsIgnoreCase("theodore_yelp")){
-                        n.getManager().setName(n.getName()).setRoles(hyelp).queue();
-                        continue;
-                    }
-                    if(n.getName().equalsIgnoreCase("theodore_delta")){
-                        n.getManager().setName(n.getName()).setRoles(hdelta).queue();
-                        continue;
-                    }
-                    if(n.getName().equalsIgnoreCase("theodore_novartis")){
-                        n.getManager().setName(n.getName()).setRoles(hnovartis).queue();
-                        continue;
-                    }
-                    if(n.getName().equalsIgnoreCase("theodore_disney")){
-                        n.getManager().setName(n.getName()).setRoles(hdisney).queue();
-                    }
-
-                }
-                event.getChannel().sendMessage("Sale Complete!").queue();
-                accepted=0;
-                return;
-            }else{
-                event.getChannel().sendMessage("Wrong User!").queue();
-                accepted=0;
-                return;
-            }
             }
 
         }
@@ -500,7 +502,7 @@ class TICTACTOE extends ListenerAdapter {
                 st.nextToken();
                 String item;
                 if(st.hasMoreTokens()){
-                     item = st.nextToken();
+                    item = st.nextToken();
                     if(shop.containsKey(item)){
                         if(bank.containsKey(event.getMember().getEffectiveName())&&shop.get(item)<bank.get(event.getMember().getEffectiveName()))
                         {
@@ -716,44 +718,44 @@ class TICTACTOE extends ListenerAdapter {
         }
         if(messageSent.equalsIgnoreCase("t!safe_shutdown")) {
             if (event.getMember().getEffectiveName().equalsIgnoreCase("Achyuta")) {
-            try {
-                PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("rank.txt")));
-                PrintWriter out2 = new PrintWriter(new BufferedWriter(new FileWriter("frank.txt")));
-                PrintWriter out3 = new PrintWriter(new BufferedWriter(new FileWriter("bank.txt")));
-                PrintWriter out4 = new PrintWriter(new BufferedWriter(new FileWriter("amount.txt")));
-                PrintWriter out5 = new PrintWriter(new BufferedWriter(new FileWriter("crank.txt")));
-                out.println(rank.size());
-                out2.println(frank.size());
-                out3.println(bank.size());
-                out4.println(amount.size());
-                out5.println(crank.size());
-                for (Member h : event.getGuild().getMembers()) {
-                    if (rank.containsKey(h.getEffectiveName())) {
-                        out.println(h.getEffectiveName() + " " + rank.get(h.getEffectiveName()));
+                try {
+                    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("rank.txt")));
+                    PrintWriter out2 = new PrintWriter(new BufferedWriter(new FileWriter("frank.txt")));
+                    PrintWriter out3 = new PrintWriter(new BufferedWriter(new FileWriter("bank.txt")));
+                    PrintWriter out4 = new PrintWriter(new BufferedWriter(new FileWriter("amount.txt")));
+                    PrintWriter out5 = new PrintWriter(new BufferedWriter(new FileWriter("crank.txt")));
+                    out.println(rank.size());
+                    out2.println(frank.size());
+                    out3.println(bank.size());
+                    out4.println(amount.size());
+                    out5.println(crank.size());
+                    for (Member h : event.getGuild().getMembers()) {
+                        if (rank.containsKey(h.getEffectiveName())) {
+                            out.println(h.getEffectiveName() + " " + rank.get(h.getEffectiveName()));
+                        }
+                        if (frank.containsKey(h.getEffectiveName())) {
+                            out2.println(h.getEffectiveName() + " " + frank.get(h.getEffectiveName()));
+                        }
+                        if (bank.containsKey(h.getEffectiveName())) {
+                            out3.println(h.getEffectiveName() + " " + bank.get(h.getEffectiveName()));
+                        }
+                        if(amount.containsKey(h.getEffectiveName())){
+                            out4.println(h.getEffectiveName()+" "+amount.get(h.getEffectiveName())[0]+" "+amount.get(h.getEffectiveName())[1]+" "+amount.get(h.getEffectiveName())[2]+" "+amount.get(h.getEffectiveName())[3]+" "+amount.get(h.getEffectiveName())[4]+" "+amount.get(h.getEffectiveName())[5]+" "+amount.get(h.getEffectiveName())[6]+" "+amount.get(h.getEffectiveName())[7]+" "+amount.get(h.getEffectiveName())[8]+" "+amount.get(h.getEffectiveName())[9]);
+                        }
+                        if (crank.containsKey(h.getEffectiveName())) {
+                            out5.println(h.getEffectiveName() + " " + crank.get(h.getEffectiveName()));
+                        }
                     }
-                    if (frank.containsKey(h.getEffectiveName())) {
-                        out2.println(h.getEffectiveName() + " " + frank.get(h.getEffectiveName()));
-                    }
-                    if (bank.containsKey(h.getEffectiveName())) {
-                        out3.println(h.getEffectiveName() + " " + bank.get(h.getEffectiveName()));
-                    }
-                    if(amount.containsKey(h.getEffectiveName())){
-                        out4.println(h.getEffectiveName()+" "+amount.get(h.getEffectiveName())[0]+" "+amount.get(h.getEffectiveName())[1]+" "+amount.get(h.getEffectiveName())[2]+" "+amount.get(h.getEffectiveName())[3]+" "+amount.get(h.getEffectiveName())[4]+" "+amount.get(h.getEffectiveName())[5]+" "+amount.get(h.getEffectiveName())[6]+" "+amount.get(h.getEffectiveName())[7]+" "+amount.get(h.getEffectiveName())[8]+" "+amount.get(h.getEffectiveName())[9]);
-                    }
-                    if (crank.containsKey(h.getEffectiveName())) {
-                        out5.println(h.getEffectiveName() + " " + crank.get(h.getEffectiveName()));
-                    }
-                }
 
-                out.close();
-                out2.close();
-                out3.close();
-                out4.close();
-                out5.close();
-            } catch (Exception e) {
+                    out.close();
+                    out2.close();
+                    out3.close();
+                    out4.close();
+                    out5.close();
+                } catch (Exception e) {
+                }
+                System.exit(0);
             }
-            System.exit(0);
-        }
         }
         if(messageSent.equalsIgnoreCase("t!rank")){
             event.getChannel().sendMessage("Current top 5:").queue();
@@ -1146,7 +1148,7 @@ class TICTACTOE extends ListenerAdapter {
                             crank.put(st.nextToken(), Double.parseDouble(st.nextToken()));
                         }
                     }catch(Exception e){ }}
-                fcolumns =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+                concolumns =new Integer[][]{{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0}};
                 conprocess();
                 player =1;
                 StringTokenizer st = new StringTokenizer(messageSent);
@@ -1178,7 +1180,7 @@ class TICTACTOE extends ListenerAdapter {
         if(messageSent.equalsIgnoreCase("t!ccol1")){
             inputC =1;
             int i=0;
-            for(int x: fcolumns[inputC-1]){
+            for(int x: concolumns[inputC-1]){
                 if(x==0){
                     i++;
                 }
@@ -1193,7 +1195,7 @@ class TICTACTOE extends ListenerAdapter {
         if(messageSent.equalsIgnoreCase("t!ccol2")){
             inputC =2;
             int i=0;
-            for(int x: fcolumns[inputC-1]){
+            for(int x: concolumns[inputC-1]){
                 if(x==0){
                     i++;
                 }
@@ -1208,7 +1210,7 @@ class TICTACTOE extends ListenerAdapter {
         if(messageSent.equalsIgnoreCase("t!ccol3")){
             inputC =3;
             int i=0;
-            for(int x: fcolumns[inputC-1]){
+            for(int x: concolumns[inputC-1]){
                 if(x==0){
                     i++;
                 }
@@ -1223,7 +1225,52 @@ class TICTACTOE extends ListenerAdapter {
         if(messageSent.equalsIgnoreCase("t!ccol4")){
             inputC =4;
             int i=0;
-            for(int x: fcolumns[inputC-1]){
+            for(int x: concolumns[inputC-1]){
+                if(x==0){
+                    i++;
+                }
+            }
+            if(i>0){
+                conInput();
+            }else{
+                event.getChannel().sendMessage("This column is full").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!ccol5")){
+            inputC =5;
+            int i=0;
+            for(int x: concolumns[inputC-1]){
+                if(x==0){
+                    i++;
+                }
+            }
+            if(i>0){
+                conInput();
+            }else{
+                event.getChannel().sendMessage("This column is full").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!ccol6")){
+            inputC =6;
+            int i=0;
+            for(int x: concolumns[inputC-1]){
+                if(x==0){
+                    i++;
+                }
+            }
+            if(i>0){
+                conInput();
+            }else{
+                event.getChannel().sendMessage("This column is full").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!ccol7")){
+            inputC =7;
+            int i=0;
+            for(int x: concolumns[inputC-1]){
                 if(x==0){
                     i++;
                 }
@@ -1500,7 +1547,7 @@ class TICTACTOE extends ListenerAdapter {
             event.getChannel().sendMessage(", and t!frow1, t!frow2, t!frow3, t!frow4 for the rows").queue();
             event.getChannel().sendMessage("Chess notation is also available. For example to play in the bottom-left corner, use t!fa1.").queue();
             event.getChannel().sendMessage("To check the top five players, use t!frank").queue();
-            event.getChannel().sendMessage("You can also play connect 4 using t!cchallenge <player>, t!ccol1-4, and t!crank to check stats.").queue();
+            event.getChannel().sendMessage("You can also play connect 4 using t!cchallenge <player>, t!ccol1-7, and t!crank to check stats.").queue();
             event.getChannel().sendMessage("t!help4 will bring you to the fourth page of help documentation").queue();
             return;
         }
@@ -1530,12 +1577,12 @@ class TICTACTOE extends ListenerAdapter {
             return;
         }
         if(messageSent.equalsIgnoreCase("t!medium")){
-                randomChance=2;
+            randomChance=2;
             event.getChannel().sendMessage("Do you want to play first?").queue();
             return;
         }
         if(messageSent.equalsIgnoreCase("t!hard")){
-                randomChance=3;
+            randomChance=3;
             event.getChannel().sendMessage("Do you want to play first?").queue();
             return;
         }
@@ -1549,7 +1596,7 @@ class TICTACTOE extends ListenerAdapter {
             return;
         }
         if(messageSent.equalsIgnoreCase("t!no")){
-                MasterAlgorithm();
+            MasterAlgorithm();
             return;
         }
         if(messageSent.equalsIgnoreCase("t!ra3")&&(event.getMember().getEffectiveName().equalsIgnoreCase(name1)||event.getMember().getEffectiveName().equalsIgnoreCase(name2))){
@@ -1642,64 +1689,69 @@ class TICTACTOE extends ListenerAdapter {
             }
             return;
         }
-            if(messageSent.equalsIgnoreCase("t!rcol1")){
-                inputC=1;
-                event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
-                return;
-            }
-            if(messageSent.equalsIgnoreCase("t!rcol2")){
-                inputC=2;
-                event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
-                return;
-            }
-            if(messageSent.equalsIgnoreCase("t!rcol3")){
-                inputC=3;
-                event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
-                return;
-            }
-            if(messageSent.equalsIgnoreCase("t!rrow1")){
-                if(inputC==0){
-                    return;
-                }
-                inputR=1;
-                if(rows[inputR-1][inputC-1]==0) {
-                    generalInput();
-                }else{
-                    event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
-                }
-                return;
-            }
-            if(messageSent.equalsIgnoreCase("t!rrow2")){
-                if(inputC==0){
-                    return;
-                }
-                inputR=2;
-                if(rows[inputR-1][inputC-1]==0) {
-                    generalInput();
-                }else{
-                    event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
-                }
-                return;
-            }
-            if(messageSent.equalsIgnoreCase("t!rrow3")){
-                if(inputC==0){
-                    return;
-                }
-                inputR=3;
-                if(rows[inputR-1][inputC-1]==0) {
-                    generalInput();
-                }else{
-                    event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
-                }
-                return;
-            }
-
+        if(messageSent.equalsIgnoreCase("t!rcol1")){
+            inputC=1;
+            event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
+            return;
         }
+        if(messageSent.equalsIgnoreCase("t!rcol2")){
+            inputC=2;
+            event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!rcol3")){
+            inputC=3;
+            event.getChannel().sendMessage("Ok. Enter the row that you want to play in.").queue();
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!rrow1")){
+            if(inputC==0){
+                return;
+            }
+            inputR=1;
+            if(rows[inputR-1][inputC-1]==0) {
+                generalInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!rrow2")){
+            if(inputC==0){
+                return;
+            }
+            inputR=2;
+            if(rows[inputR-1][inputC-1]==0) {
+                generalInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+        if(messageSent.equalsIgnoreCase("t!rrow3")){
+            if(inputC==0){
+                return;
+            }
+            inputR=3;
+            if(rows[inputR-1][inputC-1]==0) {
+                generalInput();
+            }else{
+                event.getChannel().sendMessage("Nope, that square is full. Try another one. Enter the colums you want to play in").queue();
+            }
+            return;
+        }
+
+    }
     public static void fprint(Integer[][] boardState){
         for(Integer[] row : boardState){
             d.getChannel().sendMessage(" "+ convert(row[0])+" |"+" "+ convert(row[1])+" |"+" "+ convert(row[2])+" |"+" "+ convert(row[3])).queue();
         }
 
+    }
+    public static void conprint(Integer[][] boardState){
+        for(Integer[] row : boardState){
+            d.getChannel().sendMessage(" "+ convert(row[0])+" |"+" "+ convert(row[1])+" |"+" "+ convert(row[2])+" |"+" "+ convert(row[3])+" |"+" "+ convert(row[4])+" |"+" "+ convert(row[5])+" |"+" "+ convert(row[6])).queue();
+        }
 
     }
     public static void fprocess(){
@@ -1710,16 +1762,16 @@ class TICTACTOE extends ListenerAdapter {
         crosses = new Integer[][]{{frows[0][0],frows[1][1],frows[2][2],frows[0][2],frows[2][0]},{frows[0][1],frows[1][2],frows[2][3],frows[0][3],frows[2][1]},{frows[1][0],frows[2][1],frows[3][2],frows[1][2],frows[3][0]},{frows[1][1],frows[2][2],frows[3][3],frows[1][3],frows[3][1]}};
     }
     public static void conprocess() {
-        frows = new Integer[][]{{fcolumns[0][0], fcolumns[1][0], fcolumns[2][0], fcolumns[3][0]}, {fcolumns[0][1], fcolumns[1][1], fcolumns[2][1], fcolumns[3][1]}, {fcolumns[0][2], fcolumns[1][2], fcolumns[2][2], fcolumns[3][2]}, {fcolumns[0][3], fcolumns[1][3], fcolumns[2][3], fcolumns[3][3]}};
-        fdiagonals = new Integer[][]{{frows[0][0], frows[1][1], frows[2][2], frows[3][3]}, {frows[0][3], frows[1][2], frows[2][1], frows[3][0]}};
+        conrows = new Integer[][]{{concolumns[0][0],concolumns[1][0],concolumns[2][0],concolumns[3][0],concolumns[4][0],concolumns[5][0],concolumns[6][0]},{concolumns[0][1],concolumns[1][1],concolumns[2][1],concolumns[3][1],concolumns[4][1],concolumns[5][1],concolumns[6][1]},{concolumns[0][2],concolumns[1][2],concolumns[2][2],concolumns[3][2],concolumns[4][2],concolumns[5][2],concolumns[6][2]},{concolumns[0][3],concolumns[1][3],concolumns[2][3],concolumns[3][3],concolumns[4][3],concolumns[5][3],concolumns[6][3]},{concolumns[0][4],concolumns[1][4],concolumns[2][4],concolumns[3][4],concolumns[4][4],concolumns[5][4],concolumns[6][4]},{concolumns[0][5],concolumns[1][5],concolumns[2][5],concolumns[3][5],concolumns[4][5],concolumns[5][5],concolumns[6][5]},{concolumns[0][6],concolumns[1][6],concolumns[2][6],concolumns[3][6],concolumns[4][6],concolumns[5][6],concolumns[6][6]}};
+        condiagonals =new Integer[][]{{conrows[0][0],conrows[1][1],conrows[2][2],conrows[3][3]},{conrows[0][1],conrows[1][2],conrows[2][3],conrows[3][4]},{conrows[0][2],conrows[1][3],conrows[2][4],conrows[3][5]},{conrows[0][3],conrows[1][4],conrows[2][5],conrows[3][6]},{conrows[1][0],conrows[2][1],conrows[3][2],conrows[4][3]},{conrows[1][1],conrows[2][2],conrows[3][3],conrows[4][4]},{conrows[1][2],conrows[2][3],conrows[3][4],conrows[4][5]},{conrows[1][3],conrows[2][4],conrows[3][5],conrows[4][6]},{conrows[2][0],conrows[3][1],conrows[4][2],conrows[5][3]},{conrows[2][1],conrows[3][2],conrows[4][3],conrows[5][4]},{conrows[2][2],conrows[3][3],conrows[4][4],conrows[5][5]},{conrows[2][3],conrows[3][4],conrows[4][5],conrows[5][6]},{conrows[3][0],conrows[4][1],conrows[5][2],conrows[6][3]},{conrows[3][1],conrows[4][2],conrows[5][3],conrows[6][4]},{conrows[3][2],conrows[4][3],conrows[5][4],conrows[6][5]},{conrows[3][3],conrows[4][4],conrows[5][5],conrows[6][6]},{conrows[6][0],conrows[5][1],conrows[4][2],conrows[3][3]},{conrows[6][1],conrows[5][2],conrows[4][3],conrows[3][4]},{conrows[6][2],conrows[5][3],conrows[4][4],conrows[3][5]},{conrows[6][3],conrows[5][4],conrows[4][5],conrows[3][6]},{conrows[5][0],conrows[4][1],conrows[3][2],conrows[2][3]},{conrows[5][1],conrows[4][2],conrows[3][3],conrows[2][4]},{conrows[5][2],conrows[4][3],conrows[3][4],conrows[2][5]},{conrows[5][3],conrows[4][4],conrows[3][5],conrows[2][6]},{conrows[4][0],conrows[3][1],conrows[2][2],conrows[1][3]},{conrows[4][1],conrows[3][2],conrows[2][3],conrows[1][4]},{conrows[4][2],conrows[3][3],conrows[2][4],conrows[1][5]},{conrows[4][3],conrows[3][4],conrows[2][5],conrows[1][6]},{conrows[3][0],conrows[2][1],conrows[1][2],conrows[0][3]},{conrows[3][1],conrows[2][2],conrows[1][3],conrows[0][4]},{conrows[3][2],conrows[2][3],conrows[1][4],conrows[0][5]},{conrows[3][3],conrows[2][4],conrows[1][5],conrows[0][6]}};
     }
     public static void conInput(){
         conprocess();
         int inputColumn;
         inputColumn = inputC;
-        for(int d=3; d>-1; d--){
-            if(fcolumns[inputColumn-1][d]==0) {
-                fcolumns[inputColumn - 1][d] = player;
+        for(int d=6; d>-1; d--){
+            if(concolumns[inputColumn-1][d]==0) {
+                concolumns[inputColumn - 1][d] = player;
                 break;
             }
         }
@@ -1732,7 +1784,7 @@ class TICTACTOE extends ListenerAdapter {
         }
         inputC=0;
         conprocess();
-        fprint(frows);
+        conprint(conrows);
         if(conevaluate()){
             return;
         }
@@ -1774,60 +1826,92 @@ class TICTACTOE extends ListenerAdapter {
     public static boolean conevaluate(){
         conprocess();
 
-        for(Integer[] row : frows){
-            if(sum(row) == -4){
-                d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
-                crank.put(name2,crank.get(name2)+1.0);
-                crank.put(name1,crank.get(name1)-1.0);
-                bank.put(name2,bank.get(name2)+100);
-                bank.put(name1,bank.get(name1)+10);
-                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
-                fprocess();
-                return true;
+        for(Integer[] row : conrows){
+            int poscount =0;
+            for(int g: row){
+                if(g==1){
+                    poscount++;
+                }else{
+                    poscount=0;
+                }
+                if(poscount == 7){
+                    d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                    crank.put(name2,crank.get(name2)-1.0);
+                    crank.put(name1,crank.get(name1)+1.0);
+                    bank.put(name2,bank.get(name2)+10);
+                    bank.put(name1,bank.get(name1)+100);
+                    concolumns= new Integer[][]{{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0}};
+                    conprocess();
+                    return true;
+                }
+            }
+            int negcount =0;
+            for(int g: row){
+                if(g==-1){
+                    negcount--;
+                }else{
+                    negcount=0;
+                }
+                if(negcount == -4){
+                    d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+                    crank.put(name2,crank.get(name2)+1.0);
+                    crank.put(name1,crank.get(name1)-1.0);
+                    bank.put(name2,bank.get(name2)+100);
+                    bank.put(name1,bank.get(name1)+10);
+                    concolumns= new Integer[][]{{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0}};
+                    conprocess();
+                    return true;
+                }
+        }}
+        for(Integer[] column : concolumns){
+            int poscount =0;
+            for(int g: column){
+                if(g==1){
+                    poscount++;
+                }else{
+                    poscount=0;
+                }
+                if(poscount == 7){
+                    d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
+                    crank.put(name2,crank.get(name2)-1.0);
+                    crank.put(name1,crank.get(name1)+1.0);
+                    bank.put(name2,bank.get(name2)+10);
+                    bank.put(name1,bank.get(name1)+100);
+                    concolumns= new Integer[][]{{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0}};
+                    conprocess();
+                    return true;
+                }
+            }
+            int negcount =0;
+            for(int g: column){
+                if(g==-1){
+                    negcount--;
+                }else{
+                    negcount=0;
+                }
+                if(negcount == -4){
+                    d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
+                    crank.put(name2,crank.get(name2)+1.0);
+                    crank.put(name1,crank.get(name1)-1.0);
+                    bank.put(name2,bank.get(name2)+100);
+                    bank.put(name1,bank.get(name1)+10);
+                    concolumns= new Integer[][]{{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0}};
+                    conprocess();
+                    return true;
+                }
+            }
 
-            }
-            if(sum(row) == 4){
-                d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
-                crank.put(name2,crank.get(name2)-1.0);
-                crank.put(name1,crank.get(name1)+1.0);
-                bank.put(name2,bank.get(name2)+10);
-                bank.put(name1,bank.get(name1)+100);
-                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
-                fprocess();
-                return true;
-            }
+
         }
-        for(Integer[] column : fcolumns){
-            if(sum(column) == -4){
-                d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
-                crank.put(name2,crank.get(name2)+1.0);
-                crank.put(name1,crank.get(name1)-1.0);
-                bank.put(name2,bank.get(name2)+100);
-                bank.put(name1,bank.get(name1)+10);
-                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
-                fprocess();
-                return true;
-            }
-            if(sum(column) == 4){
-                d.getChannel().sendMessage("@"+challenger+" Wins! Good Game.").queue();
-                crank.put(name2,crank.get(name2)-1.0);
-                crank.put(name1,crank.get(name1)+1.0);
-                bank.put(name2,bank.get(name2)+10);
-                bank.put(name1,bank.get(name1)+100);
-                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
-                fprocess();
-                return true;
-            }
-        }
-        for(Integer[] diagonal : fdiagonals){
+        for(Integer[] diagonal : condiagonals){
             if(sum(diagonal) == -4){
                 d.getChannel().sendMessage(challenged+" Wins! Good Game.").queue();
                 crank.put(name2,crank.get(name2)+1.0);
                 crank.put(name1,crank.get(name1)-1.0);
                 bank.put(name2,bank.get(name2)+100);
                 bank.put(name1,bank.get(name1)+10);
-                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
-                fprocess();
+                concolumns= new Integer[][]{{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0}};
+                conprocess();
                 return true;
             }
             if(sum(diagonal) == 4){
@@ -1836,13 +1920,13 @@ class TICTACTOE extends ListenerAdapter {
                 crank.put(name1,crank.get(name1)+1.0);
                 bank.put(name2,bank.get(name2)+10);
                 bank.put(name1,bank.get(name1)+100);
-                frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
-                fprocess();
+                concolumns= new Integer[][]{{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0}};
+                conprocess();
                 return true;
             }
         }
         int filled = 0;
-        for(Integer[] arr : frows){
+        for(Integer[] arr : conrows){
             for(int point : arr){
                 if(point != 0){
                     filled++;
@@ -1850,14 +1934,14 @@ class TICTACTOE extends ListenerAdapter {
 
             }
         }
-        if(filled == 16){
+        if(filled == 49){
             d.getChannel().sendMessage("Draw! Good Game.").queue();
             crank.put(name2,crank.get(name2)+0.0);
             crank.put(name1,crank.get(name1)+0.0);
             bank.put(name2,bank.get(name2)+30);
             bank.put(name1,bank.get(name1)+30);
-            frows =new Integer[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
-            fprocess();
+            concolumns= new Integer[][]{{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0},{0,0,0,0,0,0,0}};
+            conprocess();
             return true;
         }
         return false;
@@ -2534,7 +2618,7 @@ class TICTACTOE extends ListenerAdapter {
         }
         return g;
     }
-    }
+}
 
 class ValueComparator implements Comparator<String> {
 
